@@ -10,7 +10,7 @@ by liunice
 */
 
 var obj = JSON.parse($response.body);
-obj = {"requestId":"3194892a01264ed2a2c1c9710c4ea137","code":"0000","msg":"Success","recordsTotal":null,"data":{"commentUser":true,"user":{"id":100000785124,"headImgUrl":"","isConfirmed":false,"roleInfo":"normal","level":3,"levelStr":"xxx","sex":0,"confirmInfo":"","replyCount":0,"articleCount":0,"favoriteCount":0,"silverCount":10,"achievementCount":0,"hasSignIn":false,"sign":"","birthday":"2000-01-01","city":"","loginFrom":null,"token":null,"mobile":"18665993109","nickName":"kFHxcuVT","isSilence":false,"silenceMsg":"","isBlack":false,"score":480,"continuousDay":0,"fansCount":0,"focusUserCount":0,"seriesCount":0,"actorCount":0,"focus":false,"wmSign":null, "medalList": [{
+obj = {"requestId":"3194892a01264ed2a2c1c9710c4ea137","code":"0000","msg":"Success","recordsTotal":null,"data":{"commentUser":true,"user":{"id":100000785124,"headImgUrl":"","isConfirmed":false,"roleInfo":"normal","level":9999,"levelStr":"yyds","sex":0,"confirmInfo":"","replyCount":0,"articleCount":0,"favoriteCount":0,"silverCount":10,"achievementCount":0,"hasSignIn":false,"sign":"","birthday":"2000-01-01","city":"","loginFrom":null,"token":null,"mobile":"18665993109","nickName":"kFHxcuVT","isSilence":false,"silenceMsg":"","isBlack":false,"score":480,"continuousDay":0,"fansCount":0,"focusUserCount":0,"seriesCount":0,"actorCount":0,"focus":false,"wmSign":null, "medalList": [{
         "name": "yyds",
         "endTime": "9999-06-08 15:17:08",
         "imgUrl": "http://img.rr.tv/cover/20200424/o_1587720799676.png",
@@ -148,7 +148,13 @@ obj = {"requestId":"3194892a01264ed2a2c1c9710c4ea137","code":"0000","msg":"Succe
         "description": "9999",
         "icon": "kanjuwuguanggao",
         "endTime": 3675562920000
-      }],"createTime":1660743773000,"newUser":false,"certLabel":null,"certNote":null,"vipMedal":null,"vipLevel":"999","changedValue":null,"isClock":false,"vipInfo":{"level":"999","expiredTime":0,"valid":true}}}};
+      }],"createTime":1660743773000,"newUser":false,"certLabel":null,"certNote":null,"vipMedal":{
+        "name": "yyds",
+        "endTime": "9999-06-08 15:17:08",
+        "imgUrl": "http://img.rr.tv/cover/20200424/o_1587720799676.png",
+        "id": 1,
+        "isExpired": false
+      },"vipLevel":"999","changedValue":null,"isClock":false,"vipInfo":{"level":"999","expiredTime":0,"valid":true}}}};
       
 console.log("rrtv.js invoked!");
 
