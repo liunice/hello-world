@@ -9,4 +9,4 @@ root.watchInfo.sortedItems = root.sortedItems;
 
 console.log("rrtv3.js invoked!");
 
-$done({body: JSON.stringify(obj)});
+$done({body: JSON.stringify(root)});
