@@ -1,17 +1,38 @@
-var expiredAt = 0x70db6800;
-var startedAt = 0x61ec29ff;
-var remainDays = 0x3e7;
-var usedDays = 365;
 var root = {
-    "endAtSec": expiredAt,
-    "display": true,
-    "subscriptionStatus": 1,
-    "startAtSec": startedAt,
-    "sessionId": "",
-    "name": "",
-    "state": 0
+    "hifi": {
+        "effectedAtSec": 1661007604,
+        "expiredAtSec": 1671612404,
+        "bought": true,
+        "subscriptionStatus": 1
+    },
+    "iosDisableSubscribe": false,
+    "homework": {
+        "effectedAtSec": 1661007604,
+        "expiredAtSec": 1671612404,
+        "bought": true,
+        "subscriptionStatus": 1
+    },
+    "expired": false,
+    "remainDays": 999,
+    "liveClass": {
+        "effectedAtSec": 1661007604,
+        "expiredAtSec": 1671612404,
+        "bought": true,
+        "subscriptionStatus": 1
+    },
+    "newExperiencer": false,
+    "type": "base",
+    "hasBasic": true,
+    "bought": true,
+    "expiresAt": 1671612404,
+    "darwin": {
+        "effectedAtSec": 1661007604,
+        "expiredAtSec": 1671612404,
+        "bought": true,
+        "subscriptionStatus": 1
+    },
+    "name": "BASE",
+    "usedDays": 0
 };
 
-console.log("liulishuo2.js invoked!");
-
-$done({ body: JSON.stringify(root)});
+$done({ body: JSON.stringify(root) });
