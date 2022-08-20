@@ -124,9 +124,9 @@ var root = {
         },
         "iosDisableSubscribe": false,
         "firstBoughtInfo": {
-            "durationInSec": 604800,
+            "durationInSec": 604800000,
             "effectedAtSec": 1661007604,
-            "expiredAtSec": 1661612404,
+            "expiredAtSec": 1671612404,
             "isFirstBought": true
         },
         "rico": {
