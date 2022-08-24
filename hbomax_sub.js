@@ -5,7 +5,7 @@
 const $ = API("HBO MAX");
 $.http
     .get({
-        url: "http://192.168.1.189/1.vtt",
+        url: "http://192.168.1.189/Raised by Wolves.S02E01.vtt",
         // timeout: 5000,
         // events: {
         //     onTimeout: () => {
