@@ -1,24 +1,34 @@
-const $ = API("HBO MAX");
-$.http
-    .get({
-        url: "http://192.168.1.189/subtitles/House.of.the.Dragons/S01/S01E01.m3u",
-        // timeout: 5000,
-        // events: {
-        //     onTimeout: () => {
-        //         $.error("下载字幕文件超时！")
-        //     }
-        // }
-    })
-    .then((resp) => {
-        console.log("字幕m3u文件下载成功！");
-        var newResponse = $response;
-        newResponse.body = resp.body;
-        $done(newResponse);
-    })
-    .catch((error) => {
-        console.log(error);
-        $.done();
-    });
+// const $ = API("HBO MAX");
+// $.http
+//     .get({
+//         url: "http://192.168.1.189/subtitles/House.of.the.Dragons/S01/S01E01.m3u",
+//         // timeout: 5000,
+//         // events: {
+//         //     onTimeout: () => {
+//         //         $.error("下载字幕文件超时！")
+//         //     }
+//         // }
+//     })
+//     .then((resp) => {
+//         console.log("字幕m3u文件下载成功！");
+//         var newResponse = $response;
+//         newResponse.body = resp.body;
+//         $done(newResponse);
+//     })
+//     .catch((error) => {
+//         console.log(error);
+//         $.done();
+//     });
+const myStatus = "HTTP/1.1 307 Temporary Redirect";
+const myHeaders = { "Location": "http://192.168.1.189/subtitles/House.of.the.Dragons/S01/S01E01.m3u" };
+const myData = "Here we go.";
+
+const myResponse = {
+    status: myStatus,
+    headers: myHeaders, // Optional
+};
+
+$done(myResponse);
 
 // var content = "#EXTM3U\n" +
 //     "#EXT-X-VERSION:6\n" +
