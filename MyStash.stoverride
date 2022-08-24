@@ -1,4 +1,4 @@
-#SUBSCRIBED https://github.com/liunice/hello-world/raw/master/MyStash.stoverride
+#SUBSCRIBED https://raw.githubusercontent.com/liunice/hello-world/master/MyStash.stoverride
 name: My Stash Override
 desc: Some rewrite scripts and system-wide tweaks
 
