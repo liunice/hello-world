@@ -5,7 +5,7 @@
 const $ = API("HBO MAX");
 $.http
     .get({
-        url: "http://192.168.1.189/1.vtt",
+        url: "https://raw.githubusercontent.com/liunice/hello-world/master/1.vtt",
         timeout: 5000,
         events: {
             onTimeout: () => {
