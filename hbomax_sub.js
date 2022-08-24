@@ -5,13 +5,13 @@
 const $ = API("HBO MAX");
 $.http
     .get({
-        url: "https://raw.githubusercontent.com/liunice/hello-world/master/1.vtt",
-        timeout: 5000,
-        events: {
-            onTimeout: () => {
-                $.error("下载字幕文件超时！")
-            }
-        }
+        url: "http://192.168.1.189/1.vtt",
+        // timeout: 5000,
+        // events: {
+        //     onTimeout: () => {
+        //         $.error("下载字幕文件超时！")
+        //     }
+        // }
     })
     .then((resp) => {
         console.log("字幕文件下载成功！");
