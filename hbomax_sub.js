@@ -11,8 +11,13 @@ $.http
     })
     .then((resp) => {
         console.log("字幕m3u文件下载成功！");
-        $response.body = resp.body;
-        $done($response);
+        $done({
+            status: $response.statusCode,
+            headers: {
+                "Content-Type": "application/vnd.apple.mpegurl"
+            },
+            body: resp.body
+        });
     })
     .catch((error) => {
         console.log(error);
