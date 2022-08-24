@@ -11,7 +11,7 @@ $.http
     })
     .then((resp) => {
         console.log("字幕m3u文件下载成功！");
-        $response.body = $resp.body;
+        $response.body = resp.body;
         $done($response);
     })
     .catch((error) => {
