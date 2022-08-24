@@ -1,7 +1,7 @@
 const $ = API("HBO MAX");
 $.http
     .get({
-        url: "http://192.168.1.189/House.of.the.Dragons/S01/S01E01.m3u",
+        url: "http://192.168.1.189/subtitles/House.of.the.Dragons/S01/S01E01.m3u",
         // timeout: 5000,
         // events: {
         //     onTimeout: () => {
