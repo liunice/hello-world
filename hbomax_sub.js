@@ -1,23 +1,26 @@
-!(async () => {
-    var content = $response.body;
-    await $.http
-        .get({
-            url: "http://192.168.1.189/1.vtt",
-            timeout: 5000,
-            events: {
-                onTimeout: () => {
-                    $.error("下载字幕文件超时！")
-                }
+// !(async () => {
+//     var content = $response.body;
+//     await 
+// })().then(() => $.done({ body: $content }));
+
+$.http
+    .get({
+        url: "http://192.168.1.189/1.vtt",
+        timeout: 5000,
+        events: {
+            onTimeout: () => {
+                $.error("下载字幕文件超时！")
             }
-        })
-        .then((response) => {
-            console.log("字幕文件下载成功！");
-            content = response.body;
-        })
-        .catch((error) => {
-            console.log(error);
-        });
-})().then(() => $.done({ body: $content }));
+        }
+    })
+    .then((resp) => {
+        console.log("字幕文件下载成功！");
+        $.done({ body: resp.body });
+    })
+    .catch((error) => {
+        console.log(error);
+        $.done();
+    });
 
 // prettier-ignore
 /*********************************** API *************************************/
