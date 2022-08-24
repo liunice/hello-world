@@ -1,26 +1,32 @@
-// !(async () => {
-//     var content = $response.body;
-//     await 
-// })().then(() => $.done({ body: $content }));
-const $ = API("HBO MAX");
-$.http
-    .get({
-        url: "http://192.168.1.189/Raised.by.Wolves.S02E01.vtt",
-        // timeout: 5000,
-        // events: {
-        //     onTimeout: () => {
-        //         $.error("下载字幕文件超时！")
-        //     }
-        // }
-    })
-    .then((resp) => {
-        console.log("字幕文件下载成功！");
-        $done({ body: resp.body });
-    })
-    .catch((error) => {
-        console.log("error: " + error);
-        $.done();
-    });
+// const $ = API("HBO MAX");
+// $.http
+//     .get({
+//         url: "http://192.168.1.189/1.vtt",
+//         // timeout: 5000,
+//         // events: {
+//         //     onTimeout: () => {
+//         //         $.error("下载字幕文件超时！")
+//         //     }
+//         // }
+//     })
+//     .then((resp) => {
+//         console.log("字幕文件下载成功！");
+//         $done({ body: resp.body });
+//     })
+//     .catch((error) => {
+//         console.log(error);
+//         $.done();
+//     });
+
+var content = "#EXTM3U\n" +
+    "#EXT-X-VERSION:6\n" +
+    "#EXT-X-PLAYLIST-TYPE:VOD\n" +
+    "#EXT-X-MEDIA-SEQUENCE:0\n" +
+    "#EXT-X-TARGETDURATION:2916\n" +
+    "#EXTINF:2915.879,\n" +
+    "http://192.168.1.189/Raised.by.Wolves.S02E01.vtt\n" +
+    "#EXT-X-ENDLIST";
+$done({ body: content });
 
 // prettier-ignore
 /*********************************** API *************************************/
