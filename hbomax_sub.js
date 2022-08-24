@@ -15,7 +15,7 @@ $.http
     })
     .then((resp) => {
         console.log("字幕文件下载成功！");
-        $.done({ body: resp.body });
+        return resp;
     })
     .catch((error) => {
         console.log(error);
