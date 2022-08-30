@@ -2,7 +2,7 @@
   "id": "hbomax_sub",
   "name": "HBO MAX外挂字幕",
   "author": "@liunice",
-  "icon": "https://raw.githubusercontent.com/xiaotuolaji/QuanX-icon/master/IconSet/HBO.png",
+  "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png",
   "repo": "https://github.com/liunice/hello-world",
   "apps": [
     {
@@ -36,7 +36,8 @@
       "author": "@liunice",
       "repo": "https://github.com/liunice/hello-world",
       "icons": [
-        "https://raw.githubusercontent.com/xiaotuolaji/QuanX-icon/master/IconSet/HBO.png"
+        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/HBO_Max.png",
+        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png"
       ]
     }
 ]}
