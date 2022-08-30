@@ -10,6 +10,11 @@
       "name": "HBO MAX外挂字幕设置",
       "descs_html": [
       ],
+      "keys": [
+				"seriesName",
+				"seasonNo",
+        "epNo"
+			]
       "settings": [
         {
           "id": "seriesName",
