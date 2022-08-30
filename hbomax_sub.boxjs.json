@@ -1,12 +1,12 @@
 {
-  "id": "liunice.hbomax_sub",
+  "id": "hbomax_sub",
   "name": "HBO MAX外挂字幕",
   "author": "@liunice",
   "icon": "https://raw.githubusercontent.com/xiaotuolaji/QuanX-icon/master/IconSet/HBO.png",
   "repo": "https://github.com/liunice/hello-world",
   "apps": [
     {
-      "id": "liunice.hbomax_sub.settings",
+      "id": "hbomax_sub.settings",
       "name": "HBO MAX外挂字幕设置",
       "descs_html": [
       ],
