@@ -37,12 +37,6 @@
       "repo": "https://github.com/liunice/hello-world",
       "icons": [
         "https://raw.githubusercontent.com/xiaotuolaji/QuanX-icon/master/IconSet/HBO.png"
-      ],
-      "scripts": [
-        {
-          "name": "HBO MAX外挂字幕",
-          "script": "https://raw.githubusercontent.com/liunice/hello-world/master/hbomax_sub.js"
-        }
       ]
     }
 ]}
