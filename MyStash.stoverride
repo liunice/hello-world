@@ -1,4 +1,3 @@
-#SUBSCRIBED https://raw.githubusercontent.com/liunice/hello-world/master/MyStash.stoverride
 name: My Stash Override
 desc: Some rewrite scripts and system-wide tweaks
 
@@ -14,9 +13,26 @@ rules:
 http:
   mitm:
     - 'clients.plex.tv'
+    - 'manifests.api.hbo.com'
+    - '*.hbomaxcdn.com'
   script:
     - match: ^https?:\/\/clients\.plex\.tv(:443)?\/api\/v2\/user.*?includeSubscriptions=1
       name: Plex_VIP_Unlock
+      type: response
+      require-body: true
+      timeout: 10
+    - match: ^.*?\/express\-content\/urn:hbo:page:\w+:type:episode\?
+      name: HBO_Max_Ext_Sub_1
+      type: response
+      require-body: true
+      timeout: 10
+    - match: ^.*?/hlsMedia\.m3u8\?r\.host=.*?(t|v|a)\d+\.m3u8&r\.origin=cmaf$
+      name: HBO_Max_Ext_Sub_2
+      type: response
+      require-body: true
+      timeout: 10
+    - match: ^.*?\/subtitles\/.*?\.vtt$
+      name: HBO_Max_Ext_Sub_3
       type: response
       require-body: true
       timeout: 10
@@ -25,4 +41,12 @@ script-providers:
   Plex_VIP_Unlock:
     url: https://raw.githubusercontent.com/liunice/hello-world/master/plex.js
     interval: 86400
-
+  HBO_Max_Ext_Sub_1:
+    url: http://192.168.1.112:5500/hbomax_sub.js
+    interval: 86400
+  HBO_Max_Ext_Sub_2:
+    url: http://192.168.1.112:5500/hbomax_sub.js
+    interval: 86400
+  HBO_Max_Ext_Sub_3:
+    url: http://192.168.1.112:5500/hbomax_sub.js
+    interval: 86400
