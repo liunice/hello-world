@@ -1,48 +1,62 @@
 {
-  "id": "hbomax_sub",
-  "name": "HBO MAX外挂字幕",
-  "author": "@liunice",
-  "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png",
-  "repo": "https://github.com/liunice/hello-world",
-  "apps": [
-    {
-      "id": "hbomax_sub.settings",
-      "name": "HBO MAX外挂字幕设置",
-      "descs_html": [
-      ],
-      "keys": [
-				"seriesName",
-				"seasonNo",
-        "epNo"
-			]
+    "id": "hbomax_sub",
+    "name": "HBO MAX外挂字幕",
+    "author": "@liunice",
+    "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png",
+    "repo": "https://github.com/liunice/hello-world",
+    "apps": [
+        {
+            "id": "hbomax_sub.settings",
+            "name": "HBO MAX外挂字幕设置",
+            "descs_html": [],
+            "keys": [
+                "seriesName",
+                "seasonNo",
+                "epNo"
+            ]
       "settings": [
-        {
-          "id": "seriesName",
-          "name": "剧集英文名",
-          "val": "",
-          "type": "text",
-          "desc": "从HBO MAX接口处获取"
-        },
-        {
-          "id": "seasonNo",
-          "name": "Season编号",
-          "val": 1,
-          "type": "text",
-          "desc": "从HBO MAX接口处获取或手动设置"
-        },
-        {
-            "id": "epNo",
-            "name": "单集编号",
-            "val": 1,
-            "type": "text",
-            "desc": "从HBO MAX接口处获取或手动设置"
+                {
+                    "id": "seriesName",
+                    "name": "剧集英文名",
+                    "val": "",
+                    "type": "selects",
+                    "desc": "从HBO MAX接口处获取",
+                    "items": [
+                        {
+                            "key": "Raised by Wolves",
+                            "label": "Raised by Wolves"
+                        },
+                        {
+                            "key": "House of the Dragon",
+                            "label": "House of the Dragon"
+                        },
+                        {
+                            "key": "Pretty Little Liars",
+                            "label": "Pretty Little Liars"
+                        }
+                    ]
+                },
+                {
+                    "id": "seasonNo",
+                    "name": "Season编号",
+                    "val": 1,
+                    "type": "text",
+                    "desc": "从HBO MAX接口处获取或手动设置"
+                },
+                {
+                    "id": "epNo",
+                    "name": "单集编号",
+                    "val": 1,
+                    "type": "text",
+                    "desc": "从HBO MAX接口处获取或手动设置"
+                }
+            ],
+            "author": "@liunice",
+            "repo": "https://github.com/liunice/hello-world",
+            "icons": [
+                "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/HBO_Max.png",
+                "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png"
+            ]
         }
-      ],
-      "author": "@liunice",
-      "repo": "https://github.com/liunice/hello-world",
-      "icons": [
-        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/HBO_Max.png",
-        "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png"
-      ]
-    }
-]}
+    ]
+}
