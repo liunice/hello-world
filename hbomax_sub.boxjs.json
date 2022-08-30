@@ -13,8 +13,8 @@
                 "seriesName",
                 "seasonNo",
                 "epNo"
-            ]
-      "settings": [
+            ],
+            "settings": [
                 {
                     "id": "seriesName",
                     "name": "剧集英文名",
