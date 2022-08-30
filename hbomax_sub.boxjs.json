@@ -18,7 +18,7 @@
                 {
                     "id": "seriesName",
                     "name": "剧集英文名",
-                    "val": "",
+                    "val": "Pretty Little Liars",
                     "type": "selects",
                     "desc": "从HBO MAX接口处获取",
                     "items": [
