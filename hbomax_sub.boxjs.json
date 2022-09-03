@@ -23,6 +23,10 @@
                     "desc": "从HBO MAX接口处获取",
                     "items": [
                         {
+                            "key": "Warrior",
+                            "label": "Warrior"
+                        },
+                        {
                             "key": "Raised by Wolves",
                             "label": "Raised by Wolves"
                         },
