@@ -67,13 +67,13 @@
             "name": "Peacock外挂字幕",
             "descs_html": [],
             "keys": [
-                "seriesName",
-                "seasonNo",
-                "epNo"
+                "peacock_seriesName",
+                "peacock_seasonNo",
+                "peacock_epNo"
             ],
             "settings": [
                 {
-                    "id": "seriesName",
+                    "id": "peacock_seriesName",
                     "name": "剧集英文名",
                     "val": "Brave New World",
                     "type": "selects",
@@ -86,14 +86,14 @@
                     ]
                 },
                 {
-                    "id": "seasonNo",
+                    "id": "peacock_seasonNo",
                     "name": "Season编号",
                     "val": 1,
                     "type": "text",
                     "desc": "请手动设置"
                 },
                 {
-                    "id": "epNo",
+                    "id": "peacock_epNo",
                     "name": "单集编号",
                     "val": 1,
                     "type": "text",
