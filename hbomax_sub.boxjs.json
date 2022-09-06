@@ -1,13 +1,13 @@
 {
-    "id": "hbomax_sub",
-    "name": "HBO MAX外挂字幕",
+    "id": "app_ext_sub",
+    "name": "流媒体App外挂字幕",
     "author": "@liunice",
     "icon": "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png",
     "repo": "https://github.com/liunice/hello-world",
     "apps": [
         {
             "id": "hbomax_sub.settings",
-            "name": "HBO MAX外挂字幕设置",
+            "name": "HBO MAX外挂字幕",
             "descs_html": [],
             "keys": [
                 "seriesName",
@@ -60,6 +60,51 @@
             "icons": [
                 "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/HBO_Max.png",
                 "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/HBO_Max.png"
+            ]
+        },
+        {
+            "id": "peacock_sub.settings",
+            "name": "Peacock外挂字幕",
+            "descs_html": [],
+            "keys": [
+                "seriesName",
+                "seasonNo",
+                "epNo"
+            ],
+            "settings": [
+                {
+                    "id": "seriesName",
+                    "name": "剧集英文名",
+                    "val": "Brave New World",
+                    "type": "selects",
+                    "desc": "请手动选择",
+                    "items": [
+                        {
+                            "key": "Brave New World",
+                            "label": "Brave New World"
+                        }
+                    ]
+                },
+                {
+                    "id": "seasonNo",
+                    "name": "Season编号",
+                    "val": 1,
+                    "type": "text",
+                    "desc": "请手动设置"
+                },
+                {
+                    "id": "epNo",
+                    "name": "单集编号",
+                    "val": 1,
+                    "type": "text",
+                    "desc": "请手动设置"
+                }
+            ],
+            "author": "@liunice",
+            "repo": "https://github.com/liunice/hello-world",
+            "icons": [
+                "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Peacock.png",
+                "https://raw.githubusercontent.com/Koolson/Qure/master/IconSet/Color/Peacock_1.png"
             ]
         }
     ]
