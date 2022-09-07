@@ -34,6 +34,8 @@
         delete newHeaders['Cache-Control'];
         delete newHeaders['Expires'];
         delete newHeaders['Date'];
+        delete newHeaders['Access-Control-Expose-Headers'];
+        newHeaders['Access-Control-Allow-Headers'] = 'X-SkyOTT-Proposition,X-SkyOTT-Language,X-SkyOTT-Device,X-SkyOTT-Platform,X-SkyOTT-Territory,X-SkyOTT-Entitlements,X-SkyOTT-Provider,X-SkyOTT-AB-ATOM,Keep-Alive,User-Agent,X-Requested-With';
         $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
         // $done({})
     }
