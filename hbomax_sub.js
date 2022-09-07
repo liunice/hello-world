@@ -68,10 +68,10 @@
         $.setdata(seriesName, "seriesName")
 
         var newHeaders = $response.headers;
-        delete newHeaders['ETag'];
-        delete newHeaders['Cache-Control'];
-        delete newHeaders['Expires'];
-        delete newHeaders['Date'];
+        delete newHeaders['Edge-Control'];
+        delete newHeaders['X-Cache'];
+        delete newHeaders['X-Cache-Hits'];
+        delete newHeaders['Age'];
         delete newHeaders['Access-Control-Expose-Headers'];
         $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
     }
