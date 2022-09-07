@@ -6,11 +6,11 @@
         const root = JSON.parse($response.body);
         addEpisodes(root.relationships.items.data)
     }
-    else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
-        const newHeaders = $request.headers;
-        delete newHeaders['If-None-Match'];
-        $.done({ headers: newHeaders });
-    }
+    // else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
+    //     const newHeaders = $request.headers;
+    //     delete newHeaders['If-None-Match'];
+    //     $.done({ headers: newHeaders });
+    // }
     else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
         const asset_id = /\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=peacock&asset_id=${asset_id}`)
@@ -29,13 +29,13 @@
         const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
         $.msg('Peacock外挂字幕', '正在播放', msg)
         
-        // var newHeaders = $response.headers;
-        // delete newHeaders['ETag'];
-        // delete newHeaders['Cache-Control'];
-        // delete newHeaders['Expires'];
-        // delete newHeaders['Date'];
-        // $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
-        $done({})
+        var newHeaders = $response.headers;
+        delete newHeaders['ETag'];
+        delete newHeaders['Cache-Control'];
+        delete newHeaders['Expires'];
+        delete newHeaders['Date'];
+        $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
+        // $done({})
     }
     else if (/\.cdn\.peacocktv\.com\/.*?\.webvtt$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("peacock_seriesName"))
