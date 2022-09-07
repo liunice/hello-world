@@ -30,10 +30,10 @@
         $.msg('Peacock外挂字幕', '正在播放', msg)
         
         var newHeaders = $response.headers;
-        delete newHeaders['ETag'];
-        delete newHeaders['Cache-Control'];
-        delete newHeaders['Expires'];
-        delete newHeaders['Date'];
+        // delete newHeaders['ETag'];
+        // delete newHeaders['Cache-Control'];
+        // delete newHeaders['Expires'];
+        // delete newHeaders['Date'];
         $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
     }
     else if (/\.cdn\.peacocktv\.com\/.*?\.webvtt$/.test($request.url)) {
