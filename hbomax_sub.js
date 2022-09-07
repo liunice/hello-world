@@ -66,18 +66,19 @@
         $.setdata(seasonNo, "seasonNo")
         $.setdata(epNo, "epNo")
         $.setdata(seriesName, "seriesName")
+        $.done({});
 
-        var newHeaders = $response.headers;
-        delete newHeaders['Edge-Control'];
-        delete newHeaders['X-Cache'];
-        delete newHeaders['X-Cache-Hits'];
-        delete newHeaders['Age'];
-        delete newHeaders['ETag'];
-        delete newHeaders['Cache-Control'];
-        delete newHeaders['Date'];
-        delete newHeaders['x-hbo-server-time'];
-        newHeaders['Access-Control-Expose-Headers'] = 'X-B3-TraceId,X-B3-SpanId,x-hbo-set-brownie,x-hbo-set-cookie,x-hbo-headwaiter';
-        $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
+        // var newHeaders = $response.headers;
+        // delete newHeaders['Edge-Control'];
+        // delete newHeaders['X-Cache'];
+        // delete newHeaders['X-Cache-Hits'];
+        // delete newHeaders['Age'];
+        // delete newHeaders['ETag'];
+        // delete newHeaders['Cache-Control'];
+        // delete newHeaders['Date'];
+        // delete newHeaders['x-hbo-server-time'];
+        // newHeaders['Access-Control-Expose-Headers'] = 'X-B3-TraceId,X-B3-SpanId,x-hbo-set-brownie,x-hbo-set-cookie,x-hbo-headwaiter';
+        // $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
     }
     else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
         const seriesName = encodeURIComponent($.getdata("seriesName"))
