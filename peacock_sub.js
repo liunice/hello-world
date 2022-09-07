@@ -29,12 +29,13 @@
         const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
         $.msg('Peacock外挂字幕', '正在播放', msg)
         
-        var newHeaders = $response.headers;
+        // var newHeaders = $response.headers;
         // delete newHeaders['ETag'];
         // delete newHeaders['Cache-Control'];
         // delete newHeaders['Expires'];
         // delete newHeaders['Date'];
-        $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
+        // $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
+        $done({})
     }
     else if (/\.cdn\.peacocktv\.com\/.*?\.webvtt$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("peacock_seriesName"))
