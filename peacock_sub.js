@@ -7,6 +7,11 @@
         addEpisodes(root.relationships.items.data)
     }
     else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
+        const newHeaders = $request.headers;
+        delete newHeaders['If-None-Match'];
+        $.done({ headers: newHeaders });
+    }
+    else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
         const asset_id = /\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=peacock&asset_id=${asset_id}`)
         const root = JSON.parse(epBody)
