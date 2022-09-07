@@ -72,7 +72,7 @@
         delete newHeaders['X-Cache'];
         delete newHeaders['X-Cache-Hits'];
         delete newHeaders['Age'];
-        delete newHeaders['Access-Control-Expose-Headers'];
+        delete newHeaders['ETag'];
         $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
     }
     else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
