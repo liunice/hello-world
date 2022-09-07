@@ -66,7 +66,14 @@
         $.setdata(seasonNo, "seasonNo")
         $.setdata(epNo, "epNo")
         $.setdata(seriesName, "seriesName")
-        $.done()
+
+        var newHeaders = $response.headers;
+        delete newHeaders['ETag'];
+        delete newHeaders['Cache-Control'];
+        delete newHeaders['Expires'];
+        delete newHeaders['Date'];
+        delete newHeaders['Access-Control-Expose-Headers'];
+        $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
     }
     else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
         const seriesName = encodeURIComponent($.getdata("seriesName"))
