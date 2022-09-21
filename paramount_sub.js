@@ -13,7 +13,8 @@
         $.msg('Paramount+外挂字幕', '正在播放', msg)
         $.done({})
     }
-    else if (/pubads\.g\.doubleclick\.net\/ondemand\/hls\/content\/.*?\/\d+\-\d+\.vtt$/.test($request.url)) {
+    else if (/pubads\.g\.doubleclick\.net\/ondemand\/hls\/content\/.*?\/\d+\-\d+\.vtt$/.test($request.url)
+        || /vod\-.*?\.cbsaavideo\.com\/intl_vms\/.*?\/seg_\d+\.vtt$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("paramount_seriesName"))
         const seasonNo = $.getdata("paramount_seasonNo").padStart(2, '0')
         const epNo = $.getdata("paramount_epNo").padStart(2, '0')
