@@ -8,7 +8,12 @@
     }
     else if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\?/.test($request.path)) {
         const root = JSON.parse($response.body);
-        addEpisodes(root.components[0].items[0].items)
+        for (const itms of root.components[0].items) {
+            if (itms.items.length && itms.items[0]['_type'] == 'episode') {
+                addEpisodes(itms.items)
+                break
+            }
+        }
     }
     else if (/\/content\/v\d+\/hubs\/movie\/([\w\-]+)\?/.test($request.path)) {
         const root = JSON.parse($response.body);
