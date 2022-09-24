@@ -3,14 +3,27 @@
     const $ = Env("paramount_sub.js")
 
     if (/link\.theplatform\.com\/s\/\w+\/\w+\?format=SMIL/.test($request.url)) {
-        const seriesName = /<param name="SeriesTitle" value="([^"]+)"/.exec($response.body)[1];
-        const seasonNo = /<param name="SeasonNumber" value="([^"]+)"/.exec($response.body)[1];
-        const episodenNo = /<param name="EpisodeNumber" value="([^"]+)"/.exec($response.body)[1];
-        $.setdata(seriesName, 'paramount_seriesName');
-        $.setdata(seasonNo, 'paramount_seasonNo');
-        $.setdata(episodenNo, 'paramount_epNo');
-        const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
-        $.msg('Paramount+外挂字幕', '正在播放', msg)
+        if (/<param name="SeasonNumber" value="([^"]+)"/.test($response.url)) {
+            const seriesName = /<param name="SeriesTitle" value="([^"]+)"/.exec($response.body)[1];
+            const seasonNo = /<param name="SeasonNumber" value="([^"]+)"/.exec($response.body)[1];
+            const episodenNo = /<param name="EpisodeNumber" value="([^"]+)"/.exec($response.body)[1];
+            $.setdata(seriesName, 'paramount_seriesName');
+            $.setdata(seasonNo, 'paramount_seasonNo');
+            $.setdata(episodenNo, 'paramount_epNo');
+            const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
+            $.msg('Paramount+外挂字幕', '正在播放剧集', msg)
+        }
+        else {
+            let seriesName = /<ref src="[^"]+" title="([^"]+)"/.exec($response.body)[1];
+            seriesName = seriesName.replace(/\:/g, '')
+            const seasonNo = '01';
+            const episodenNo = '01';
+            $.setdata(seriesName, 'paramount_seriesName');
+            $.setdata(seasonNo, 'paramount_seasonNo');
+            $.setdata(episodenNo, 'paramount_epNo');
+            $.msg('Paramount+外挂字幕', '正在播放电影', seriesName)
+        }
+        
         $.done({})
     }
     else if (/pubads\.g\.doubleclick\.net\/ondemand\/hls\/content\/.*?\/\d+\-\d+\.vtt$/.test($request.url)
