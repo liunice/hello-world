@@ -3,7 +3,7 @@
     const $ = Env("paramount_sub.js")
 
     if (/link\.theplatform\.com\/s\/\w+\/\w+\?format=SMIL/.test($request.url)) {
-        if (/<param name="SeasonNumber" value="([^"]+)"/.test($response.url)) {
+        if (/<param name="EpisodeNumber" value="([^"]+)"/.test($response.url)) {
             const seriesName = /<param name="SeriesTitle" value="([^"]+)"/.exec($response.body)[1];
             const seasonNo = /<param name="SeasonNumber" value="([^"]+)"/.exec($response.body)[1];
             const episodenNo = /<param name="EpisodeNumber" value="([^"]+)"/.exec($response.body)[1];
