@@ -2,12 +2,13 @@
     const subtitleHost = 'http://192.168.1.189'
     const $ = Env("hbomax_sub.js")
 
-    if (/\/subtitles\/.*?\.vtt$/.test($request.path)) {
+    if (/\/subtitles\/.*?\.vtt$/.test($request.url)) {
         // get subtitle config (if any)
         let offset = 0
-        const epInfo = /(S\d{2}E\d{2})\.vtt$/i.exec($request.path)[1]
+        const epInfo = /(S\d{2}E\d{2})\.vtt$/i.exec($request.url)[1]
         try {
-            var confBody = await getBody(subtitleHost + $request.path.replace(/S\d{2}E\d{2}\.vtt$/i, 'subtitle.conf'))
+            // var confBody = await getBody(subtitleHost + $request.path.replace(/S\d{2}E\d{2}\.vtt$/i, 'subtitle.conf'))
+            var confBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2})\//.exec($request.url)[1] + '/subtitle.conf')
             $.log(confBody)
             const of = getConfig(confBody, 'offset', epInfo)
             if (of) {
@@ -16,7 +17,7 @@
 
             if (getConfig(confBody, 'strip_trailers', epInfo) == 'false') {
                 // subtitle contains trailer
-                offset -= parseInt($.getdata('trailers_duration'))
+                offset -= parseInt($.getdata('trailers_duration') || '0')
             }
             $.log('offset = ' + offset)
         }
@@ -27,7 +28,8 @@
         }
 
         // download srt
-        const srtBody = await getBody(subtitleHost + $request.path.replace(/\.vtt$/, '.srt'))
+        // const srtBody = await getBody(subtitleHost + $request.path.replace(/\.vtt$/, '.srt'))
+        const srtBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2}\/S\d{2}E\d{2})/.exec($request.url)[1] + '.srt')
         $.log("srt字幕下载成功！")
 
         // generate webvtt
@@ -42,9 +44,14 @@
         // return response
         var newHeaders = $request.headers;
         newHeaders['Content-Type'] = 'application/vnd.apple.mpegurl';
-        $.done({ body: vttBody, headers: newHeaders, status: 'HTTP/1.1 200 OK' })
+        if ($.isQuanX()) {
+            $.done({ body: vttBody, headers: newHeaders, status: 'HTTP/1.1 200 OK' })
+        }
+        else {
+            $.done({ body: vttBody, headers: newHeaders, status: 200 })
+        }
     }
-    // else if (/\/express\-content\/urn:hbo:page:\w+:type:episode\?.*?FREE$/.test($request.path)) {
+    // else if (/\/express\-content\/urn:hbo:page:\w+:type:episode\?.*?FREE$/.test($request.url)) {
     //     const status = "HTTP/1.1 302 Moved Temporarily";
     //     const headers = { "Location": $request.url + '&_=' + Date.now() };
 
@@ -55,7 +62,7 @@
 
     //     $.done(resp)
     // }
-    else if (/\/express\-content\/urn\:hbo\:page\:.*?\:type\:episode\?/.test($request.path)) {
+    else if (/\/express\-content\/urn\:hbo\:page\:.*?\:type\:episode\?/.test($request.url)) {
         const root = JSON.parse($response.body)
         const episode = root[0]['body']['metadata']['hadron-legacy-telemetry']
         const seasonNo = episode['seasonTitle'] ? /Season (\d+)/.exec(episode['seasonTitle'])[1] : '1'
@@ -67,20 +74,8 @@
         $.setdata(epNo, "epNo")
         $.setdata(seriesName, "seriesName")
         $.done({});
-
-        // var newHeaders = $response.headers;
-        // delete newHeaders['Edge-Control'];
-        // delete newHeaders['X-Cache'];
-        // delete newHeaders['X-Cache-Hits'];
-        // delete newHeaders['Age'];
-        // delete newHeaders['ETag'];
-        // delete newHeaders['Cache-Control'];
-        // delete newHeaders['Date'];
-        // delete newHeaders['x-hbo-server-time'];
-        // newHeaders['Access-Control-Expose-Headers'] = 'X-B3-TraceId,X-B3-SpanId,x-hbo-set-brownie,x-hbo-set-cookie,x-hbo-headwaiter';
-        // $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders, body: $response.body });
     }
-    else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
+    else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("seriesName"))
         const seasonNo = $.getdata("seasonNo").padStart(2, '0')
         const epNo = $.getdata("epNo").padStart(2, '0')
@@ -94,16 +89,15 @@
 https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E${epNo}.vtt
 #EXT-X-ENDLIST
 `
-        $.done(body)
+        $.done({ body: body })
     }
-    else if (/\/hlsMedia\.m3u8\?r\.host=.*?(v|a)\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
-        // strip all previously, trailers from the beginning
+    else if (/\/hlsMedia\.m3u8\?r\.host=.*?(v|a)\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
+        // strip all trailers from the beginning
         const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
-        // const body = $response.body;
         // console.log(body)
 
         // calculate trailer duration (only once)
-        if (/\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.path)) {
+        if (/\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
             let duration = 0
             const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec($response.body)
             if (mid) {
@@ -117,7 +111,7 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
             }
             $.setdata(duration.toString(), 'trailers_duration')
         }
-        $.done(body)
+        $.done({ body: body })
     }
 
     function getBody(url) {

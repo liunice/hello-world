@@ -6,13 +6,8 @@
         const root = JSON.parse($response.body);
         addEpisodes(root.relationships.items.data)
     }
-    // else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
-    //     const newHeaders = $request.headers;
-    //     delete newHeaders['If-None-Match'];
-    //     $.done({ headers: newHeaders });
-    // }
-    else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.test($request.url)) {
-        const asset_id = /\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=\(next/.exec($request.url)[1]
+    else if (/\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=/.test($request.url)) { // represent=\(next
+        const asset_id = /\/adapter\-calypso\/v\d+\/query\/node\/([\w\-]+)\?represent=/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=peacock&asset_id=${asset_id}`)
         const root = JSON.parse(epBody)
         if (!root) {
@@ -107,6 +102,9 @@ https://g001-vod-us-cmaf-prd-cl.cdn.peacocktv.com/pub/global/DzG/2Sw/PCK_1623143
         }
         // $.msg('Peacock外挂字幕', '正在播放', `[${type}] 视频广告已去除`)
         $.done({ body: newBody })
+    }
+    else if (/^https:\/\/.*?\.mediatailor\..*?\.amazonaws\.com\/v\d+\/tracking\/\w+\/peacock\-cmaf\-hls\-vod/.test($response.url)) {
+        $.done({ body: "" })
     }
 
     function addEpisodes(items) {

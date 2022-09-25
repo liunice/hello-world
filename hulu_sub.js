@@ -2,11 +2,11 @@
     const subtitleHost = 'http://192.168.1.189';
     const $ = Env("hulu_sub.js");
 
-    if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\/season\/\d+\?/.test($request.path)) {
+    if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\/season\/\d+\?/.test($request.url)) {
         const root = JSON.parse($response.body);
         addEpisodes(root.items)
     }
-    else if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\?/.test($request.path)) {
+    else if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\?/.test($request.url)) {
         const root = JSON.parse($response.body);
         for (const itms of root.components[0].items) {
             if (itms.items.length && itms.items[0]['_type'] == 'episode') {
@@ -15,7 +15,7 @@
             }
         }
     }
-    else if (/\/content\/v\d+\/hubs\/movie\/([\w\-]+)\?/.test($request.path)) {
+    else if (/\/content\/v\d+\/hubs\/movie\/([\w\-]+)\?/.test($request.url)) {
         const root = JSON.parse($response.body);
         const entity = root['details']['vod_items']['focus']['entity']
         const movie = {
@@ -38,15 +38,16 @@
             if (root.count) {
                 $.msg('Hulu外挂字幕', '电影信息已保存', entity['name'])
             }
-            $.done()
+            $.done({})
         })
     }
-    else if (/\/subtitles\/(.*?)\/S\d{2}\/(S\d{2}E\d{2})\.vtt$/.test($request.path)) {
+    else if (/\/subtitles\/(.*?)\/S\d{2}\/(S\d{2}E\d{2})\.vtt$/.test($request.url)) {
         // get subtitle config (if any)
         let offset = 0
-        const epInfo = /(S\d{2}E\d{2})\.vtt$/i.exec($request.path)[1]
+        const epInfo = /(S\d{2}E\d{2})\.vtt$/i.exec($request.url)[1]
         try {
-            var confBody = await getBody(subtitleHost + $request.path.replace(/S\d{2}E\d{2}\.vtt$/i, 'subtitle.conf'))
+            // var confBody = await getBody(subtitleHost + $request.path.replace(/S\d{2}E\d{2}\.vtt$/i, 'subtitle.conf'))
+            var confBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2})\//.exec($request.url)[1] + '/subtitle.conf')
             $.log(confBody)
             const off = getConfig(confBody, 'offset', epInfo)
             if (off) {
@@ -55,17 +56,18 @@
 
             if (getConfig(confBody, 'strip_trailers', epInfo) == 'false') {
                 // subtitle contains trailer
-                offset -= parseInt($.getdata('trailers_duration'))
+                offset -= parseInt($.getdata('trailers_duration') || '0')
             }
             $.log('offset = ' + offset)
         }
         catch (err) {
             $.log(err)
-            $.done()
+            $.done({})
         }
 
         // download srt
-        const srtBody = await getBody(subtitleHost + $request.path.replace(/\.vtt$/, '.srt'))
+        //const srtBody = await getBody(subtitleHost + $request.path.replace(/\.vtt$/, '.srt'))
+        const srtBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2}\/S\d{2}E\d{2})/.exec($request.url)[1] + '.srt')
         $.log("srt字幕下载成功！")
 
         // generate webvtt
@@ -80,10 +82,15 @@
         // return response
         var newHeaders = $request.headers;
         newHeaders['Content-Type'] = 'application/vnd.apple.mpegurl';
-        $.done({ body: vttBody, headers: newHeaders, status: 'HTTP/1.1 200 OK' })
+        if ($.isQuanX()) {
+            $.done({ body: vttBody, headers: newHeaders, status: 'HTTP/1.1 200 OK' })
+        }
+        else {
+            $.done({ body: vttBody, headers: newHeaders, status: 200 })
+        }
     }
-    else if (/\/webvtt\?asset_id=(\d+)/.test($request.path)) {
-        const asset_id = /\/webvtt\?asset_id=(\d+)/.exec($request.path)[1]
+    else if (/\/webvtt\?asset_id=(\d+)/.test($request.url)) {
+        const asset_id = /\/webvtt\?asset_id=(\d+)/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=hulu&asset_id=${asset_id}`)
         const root = JSON.parse(epBody)
         if (!root) {
@@ -110,9 +117,9 @@
 https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S${seasonNo}/S${seasonNo}E${epNo}.vtt
 #EXT-X-ENDLIST
 `
-        $.done(body)
+        $.done({ body: body })
     }
-    else if (/\/v\d+\/hls\/\d+\/.*?\.m3u8\?/.test($request.path)) {
+    else if (/\/v\d+\/hls\/\d+\/.*?\.m3u8\?/.test($request.url)) {
         // strip all previously, trailers from the beginning
         const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
@@ -129,7 +136,7 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
             $.log('trailers_duration = ' + duration)
         }
         $.setdata(duration.toString(), 'trailers_duration')
-        $.done(body)
+        $.done({ body: body })
     }
 
     function addEpisodes(items) {
@@ -157,7 +164,7 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
             if (root.count) {
                 $.msg('Hulu外挂字幕', `剧集信息已保存 (共${root.count}集)`, `[${episodes[0]['series_name']}] Season ${episodes[0]['season']}`)
             }
-            $.done()
+            $.done({})
         })
     }
 
