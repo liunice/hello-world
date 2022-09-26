@@ -54,8 +54,7 @@
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
         const resolution = $response.body.indexOf('RESOLUTION=3840x2160') > -1 ? '3840x2160' : '1920x1080'
         for (const p of ['12\\d{6}', '10\\d{6}', '\\d+']) {
-            console.log(`#EXT\-X\-STREAM\-INF:BANDWIDTH=(${p}),AVERAGE\-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?\s+(https:\/\/.+)`)
-            const m = RegExp(`#EXT\-X\-STREAM\-INF:BANDWIDTH=(${p}),AVERAGE\-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?\s+(https:\/\/.+)`, 'g').exec($response.body)
+            const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${p}),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?\s+(https:\/\/.+)`, 'g').exec($response.body)
             if (m) {
                 $.log(`found ${resolution}:`, m[3])
                 $.setdata(m[3], 'hbomax_hd_hls_url')
