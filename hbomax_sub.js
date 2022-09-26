@@ -91,7 +91,8 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
 `
         $.done({ body: body })
     }
-    else if (/\/hlsMedia\.m3u8\?r\.host=.*?(v|a)\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
+    else if (/\/hlsMedia\.m3u8\?r\.host=.*?a\d+\.m3u8&r\.origin=cmaf$/.test($request.url)
+        || /\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf&__force_bitrate=true$/.test($request.url)) {
         // strip all trailers from the beginning
         const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
