@@ -52,15 +52,15 @@
         }
     }
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
-        const resolution = $response.body.indexOf('RESOLUTION=3840x2160') > -1 ? '3840x2160' : '1920x1080'
-        for (const p of ['12\\d{6}', '10\\d{6}', '\\d+']) {
-            const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${p}),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?\s+(https:\/\/.+)`, 'g').exec($response.body)
-            if (m) {
-                $.log(`found ${resolution}:`, m[3])
-                $.setdata(m[3], 'hbomax_hd_hls_url')
-                $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",AUDIO="ac3"`)
-                break
-            }
+        const body = $response.body
+        const resolution = body.indexOf('RESOLUTION=3840x2160') > -1 ? '3840x2160' : '1920x1080'
+        const bitrates = [...body.matchAll(RegExp(string.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="[^"]+",RESOLUTION=${resolution},AUDIO="ac3".*?\s+https:\/\/.+`))].map(s => parseInt(s[1]))
+        const maxrate = Math.max(...bitrates)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?\s+(https:\/\/.+)`, 'g').exec(body)
+        if (m) {
+            $.log(`found ${resolution}:`, m[3])
+            $.setdata(m[3], 'hbomax_hd_hls_url')
+            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}"`)
         }
         $.done({})
     }
