@@ -52,10 +52,12 @@
         }
     }
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
-        const m = /#EXT\-X\-STREAM\-INF:BANDWIDTH=(\d+),AVERAGE\-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=(3840x2160|1920x1080),AUDIO="ac3".*?,VIDEO\-RANGE=\w+\s+(https:\/\/.+)$/.exec($response.body)
-        $.log(`found ${m[3]}:`, m[4])
-        $.setdata(m[4], 'hbomax_hd_hls_url')
-        $.msg('HBO Max外挂字幕', `已强制${m[3]}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",AUDIO="ac3"`)
+        const m = /#EXT\-X\-STREAM\-INF:BANDWIDTH=(\d+),AVERAGE\-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=(3840x2160|1920x1080),AUDIO="ac3".*?\s+(https:\/\/.+)/.exec($response.body)
+        if (m) {
+            $.log(`found ${m[3]}:`, m[4])
+            $.setdata(m[4], 'hbomax_hd_hls_url')
+            $.msg('HBO Max外挂字幕', `已强制${m[3]}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",AUDIO="ac3"`)
+        }
         $.done({})
     }
     else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
