@@ -52,7 +52,7 @@
         }
     }
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
-        const m = /#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=1920x1080,AUDIO="ac3"[\s\S]*?(https:\/\/.*?)/.exec($response.body)
+        const m = /#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=1920x1080,AUDIO="ac3"[\s\S]*?(https:\/\/.+)$/.exec($response.body)
         if (m) {
             $.log('found 1920x1080:', m[3])
             $.setdata(m[3], 'hbomax_hd_hls_url')
@@ -61,13 +61,14 @@
         $.done({})
     }
     else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
-        const hd_url = $.getdata('hbomax_hd_hls_url') || $request.url
+        const hd_url = ($.getdata('hbomax_hd_hls_url') || $request.url) + '&__force_bitrate=true'
         const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
-        const headers = { "Location": hd_url + '&__force_bitrate=true' };
+        const headers = { "Location": hd_url };
         const resp = {
             status: status,
             headers: headers
         }
+        $.log('video hls url redirected to:', hd_url)
         $.done(resp)
     }
     else if (/\/express\-content\/urn\:hbo\:page\:.*?\:type\:episode\?/.test($request.url)) {
