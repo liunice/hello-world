@@ -51,17 +51,22 @@
             $.done({ body: vttBody, headers: newHeaders, status: 200 })
         }
     }
-    // else if (/\/express\-content\/urn:hbo:page:\w+:type:episode\?.*?FREE$/.test($request.url)) {
-    //     const status = "HTTP/1.1 302 Moved Temporarily";
-    //     const headers = { "Location": $request.url + '&_=' + Date.now() };
-
-    //     const resp = {
-    //         status: status,
-    //         headers: headers
-    //     }
-
-    //     $.done(resp)
-    // }
+    else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
+        const m = /#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=1920x1080,AUDIO="ac3"[\s\S]*?(https:\/\/.*?)/.exec($response.body)
+        if (m) {
+            $.log('1920x1080:', m[3])
+            $.msg('HBO Max外挂字幕', '已强制1080p', `BANDWIDTH=${m[1]},CODECS="${m[2]}",AUDIO="ac3"`)
+        }
+    }
+    else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
+        const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
+        const headers = { "Location": $.getdata('hbomax_hd_hls_url') + '&__force_bitrate=true' };
+        const resp = {
+            status: status,
+            headers: headers
+        }
+        $.done(resp)
+    }
     else if (/\/express\-content\/urn\:hbo\:page\:.*?\:type\:episode\?/.test($request.url)) {
         const root = JSON.parse($response.body)
         const episode = root[0]['body']['metadata']['hadron-legacy-telemetry']
