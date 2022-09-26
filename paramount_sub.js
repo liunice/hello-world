@@ -61,7 +61,8 @@
         const rpl = (str => {
             let line = msToStr(strToMS(str) + offset)
             if (++idx % 2 == 0) {
-                line += ' line:85%';
+                // line += ' line:85%';
+                line += ' line:95%';
             }
             return line;
         })
