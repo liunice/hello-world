@@ -52,7 +52,7 @@
         }
     }
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
-        const m = /#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=(3840x2160|1920x1080),AUDIO="ac3".*?,VIDEO-RANGE=\w+\s+(https:\/\/.+)$/.exec($response.body)
+        const m = /#EXT\-X\-STREAM\-INF:BANDWIDTH=(\d+),AVERAGE\-BANDWIDTH=\d+,CODECS="([^"]+)",RESOLUTION=(3840x2160|1920x1080),AUDIO="ac3".*?,VIDEO\-RANGE=\w+\s+(https:\/\/.+)$/.exec($response.body)
         if (m) {
             $.log(`found ${m[3]}:`, m[4])
             $.setdata(m[4], 'hbomax_hd_hls_url')
