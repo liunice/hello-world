@@ -57,6 +57,7 @@
             $.log('1920x1080:', m[3])
             $.msg('HBO Max外挂字幕', '已强制1080p', `BANDWIDTH=${m[1]},CODECS="${m[2]}",AUDIO="ac3"`)
         }
+        $.done({})
     }
     else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
         const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
