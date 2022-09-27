@@ -103,26 +103,36 @@
         }
         $.done({})
     }
-    else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
-        const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '?__force_bitrate=true'
-        const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
-        const headers = { "Location": hd_url };
-        const resp = {
-            status: status,
-            headers: headers
-        }
-        $.log('video hls url redirected to:', hd_url)
-        $.done(resp)
-    }
+    // else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
+    //     const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '?__force_bitrate=true'
+    //     const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
+    //     const headers = { "Location": hd_url };
+    //     const resp = {
+    //         status: status,
+    //         headers: headers
+    //     }
+    //     $.log('video hls url redirected to:', hd_url)
+    //     $.done(resp)
+    // }
     else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8\?__force_bitrate=true/.test($request.url)) {
+        let body = $response.body
+        // download hd m3u8 for video
+        if (body.indexOf('.ts') > -1) {
+            const hd_url = $.getdata('paramount_hd_hls_url')
+            if (hd_url) {
+                $.log('using hd video url:', hd_url)
+                body = await getBody(hd_url)
+            }
+        }
+
         // strip all trailers from the beginning
-        const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
+        body = body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
 
         // calculate trailer duration (only once)
         if (body.indexOf('.ts') > -1) {
             let duration = 0
-            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec($response.body)
+            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec(body)
             if (mid) {
                 $.log(mid[2])
                 // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll

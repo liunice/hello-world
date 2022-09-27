@@ -167,17 +167,20 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
         // console.log(body)
 
         // calculate trailer duration (only once)
-        let duration = 0
-        const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec(body)
-        if (mid) {
-            // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
-            const parts = [...mid[2].matchAll(/#EXTINF:([\d\.]+)\,/g)]
-            for (const part of parts) {
-                duration += Math.round(parseFloat(part[1]) * 1000)
+        if (body.indexOf('_audio.mp4?') == -1) {
+            let duration = 0
+            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec(body)
+            if (mid) {
+                // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
+                const parts = [...mid[2].matchAll(/#EXTINF:([\d\.]+)\,/g)]
+                for (const part of parts) {
+                    duration += Math.round(parseFloat(part[1]) * 1000)
+                }
+                $.log('trailers_duration = ' + duration)
             }
-            $.log('trailers_duration = ' + duration)
+            $.setdata(duration.toString(), 'trailers_duration')
         }
-        $.setdata(duration.toString(), 'trailers_duration')
+
         $.done({ body: body })
     }
 
