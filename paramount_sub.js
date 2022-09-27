@@ -11,7 +11,7 @@
             $.setdata(seasonNo, 'paramount_seasonNo');
             $.setdata(episodenNo, 'paramount_epNo');
             const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
-            $.msg('Paramount+外挂字幕', '正在播放剧集', msg)
+            notify('Paramount+外挂字幕', '正在播放剧集', msg)
         }
         else {
             let seriesName = /<ref src="[^"]+" title="([^"]+)"/.exec($response.body)[1];
@@ -21,7 +21,7 @@
             $.setdata(seriesName, 'paramount_seriesName');
             $.setdata(seasonNo, 'paramount_seasonNo');
             $.setdata(episodenNo, 'paramount_epNo');
-            $.msg('Paramount+外挂字幕', '正在播放电影', seriesName)
+            notify('Paramount+外挂字幕', '正在播放电影', seriesName)
         }
         
         $.done({})
@@ -101,7 +101,7 @@
             }
             $.log(`found ${resolution} with url:`, hd_url)
             $.setdata(hd_url, 'paramount_hd_hls_url')
-            $.msg('Paramount+外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"${m[3]}`)
+            notify('Paramount+外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"${m[3]}`)
         }
         else {
             $.setdata('', 'paramount_hd_hls_url')
@@ -141,6 +141,18 @@
             $.setdata(duration.toString(), 'paramount_trailers_duration')
         }
         $.done({ body: body })
+    }
+
+    function notify(title, subtitle, message, to_phone = true) {
+        $.msg(title, subtitle, message)
+
+        const opts = {
+            'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
+            'body': { title: `${title} - ${subtitle}`, message: message }
+        }
+        $.http.post(opts).then(resp => {
+            $.log('[Gotify]', resp.body)
+        })
     }
 
     function getBody(url) {

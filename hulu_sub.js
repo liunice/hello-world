@@ -36,7 +36,7 @@
             $.log(resp.body)
             const root = JSON.parse(resp.body)
             if (root.count) {
-                $.msg('Hulu外挂字幕', '电影信息已保存', entity['name'])
+                notify('Hulu外挂字幕', '电影信息已保存', entity['name'])
             }
             $.done({})
         })
@@ -103,7 +103,7 @@
         if (m) {
             $.log(`found ${resolution} with url:`, m[4])
             $.setdata(m[4], 'hulu_hd_hls_url')
-            $.msg('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
+            notify('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
         else {
             $.setdata('', 'hulu_hd_hls_url')
@@ -126,7 +126,7 @@
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=hulu&asset_id=${asset_id}`)
         const root = JSON.parse(epBody)
         if (!root) {
-            $.msg('Hulu外挂字幕', `asset_id = ${asset_id}`, '数据库未保存相关信息')
+            notify('Hulu外挂字幕', `asset_id = ${asset_id}`, '数据库未保存相关信息')
             $.done({});
         }
 
@@ -134,10 +134,10 @@
         const seasonNo = root['season'].padStart(2, '0')
         const epNo = root['episode'].padStart(2, '0')
         if (root.is_movie) {
-            $.msg('Hulu外挂字幕', '正在播放电影', seriesName)
+            notify('Hulu外挂字幕', '正在播放电影', seriesName)
         }
         else {
-            $.msg('Hulu外挂字幕', '正在播放剧集', `[${seriesName}] S${seasonNo}E${epNo}`)
+            notify('Hulu外挂字幕', '正在播放剧集', `[${seriesName}] S${seasonNo}E${epNo}`)
         }
 
         const body = `#EXTM3U
@@ -207,9 +207,21 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
             $.log(resp.body)
             const root = JSON.parse(resp.body)
             if (root.count) {
-                $.msg('Hulu外挂字幕', `剧集信息已保存 (共${root.count}集)`, `[${episodes[0]['series_name']}] Season ${episodes[0]['season']}`)
+                notify('Hulu外挂字幕', `剧集信息已保存 (共${root.count}集)`, `[${episodes[0]['series_name']}] Season ${episodes[0]['season']}`)
             }
             $.done({})
+        })
+    }
+
+    function notify(title, subtitle, message, to_phone = true) {
+        $.msg(title, subtitle, message)
+
+        const opts = {
+            'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
+            'body': { title: `${title} - ${subtitle}`, message: message }
+        }
+        $.http.post(opts).then(resp => {
+            $.log('[Gotify]', resp.body)
         })
     }
 

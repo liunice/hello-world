@@ -11,7 +11,7 @@
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=peacock&asset_id=${asset_id}`)
         const root = JSON.parse(epBody)
         if (!root) {
-            $.msg('Peacock外挂字幕', `asset_id = ${asset_id}`, '数据库未保存相关信息')
+            notify('Peacock外挂字幕', `asset_id = ${asset_id}`, '数据库未保存相关信息')
             $.done({});
         }
 
@@ -22,7 +22,7 @@
         $.setdata(seasonNo, 'peacock_seasonNo');
         $.setdata(episodenNo, 'peacock_epNo');
         const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
-        $.msg('Peacock外挂字幕', '正在播放', msg)
+        notify('Peacock外挂字幕', '正在播放', msg)
         
         var newHeaders = $response.headers;
         delete newHeaders['ETag'];
@@ -100,7 +100,7 @@ https://g001-vod-us-cmaf-prd-cl.cdn.peacocktv.com/pub/global/DzG/2Sw/PCK_1623143
 #EXT-X-ENDLIST
             `
         }
-        // $.msg('Peacock外挂字幕', '正在播放', `[${type}] 视频广告已去除`)
+        // notify('Peacock外挂字幕', '正在播放', `[${type}] 视频广告已去除`)
         $.done({ body: newBody })
     }
     else if (/^https:\/\/.*?\.mediatailor\..*?\.amazonaws\.com\/v\d+\/tracking\/\w+\/peacock\-cmaf\-hls\-vod/.test($response.url)) {
@@ -131,9 +131,21 @@ https://g001-vod-us-cmaf-prd-cl.cdn.peacocktv.com/pub/global/DzG/2Sw/PCK_1623143
             $.log(resp.body)
             const root = JSON.parse(resp.body)
             if (root.count) {
-                $.msg('Peacock外挂字幕', `剧集信息已保存 (共${root.count}集)`, `[${episodes[0]['series_name']}] Season ${episodes[0]['season']}`)
+                notify('Peacock外挂字幕', `剧集信息已保存 (共${root.count}集)`, `[${episodes[0]['series_name']}] Season ${episodes[0]['season']}`)
             }
             $.done()
+        })
+    }
+
+    function notify(title, subtitle, message, to_phone = true) {
+        $.msg(title, subtitle, message)
+        
+        const opts = {
+            'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
+            'body': { title: `${title} - ${subtitle}`, message: message }
+        }
+        $.http.post(opts).then(resp => {
+            $.log('[Gotify]', resp.body)
         })
     }
 

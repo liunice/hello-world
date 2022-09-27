@@ -62,7 +62,7 @@
             const hd_url = m[4] + '&__force_bitrate=true'
             $.log(`found ${resolution} with url:`, hd_url)
             $.setdata(hd_url, 'hbomax_hd_hls_url')
-            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
+            notify('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
         else {
             $.setdata('', 'hbomax_hd_hls_url')
@@ -83,7 +83,7 @@
             $.setdata(seasonNo, "hbomax_seasonNo")
             $.setdata(epNo, "hbomax_epNo")
             $.setdata(seriesName, "hbomax_seriesName")
-            $.msg('HBO MAX外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
+            notify('HBO MAX外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
             $.done({})
         }
     }
@@ -94,7 +94,7 @@
         const epNo = episode['episodeNumber'].toString()
         const seriesName = episode['seriesName']
         const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${epNo.padStart(2, '0')}`
-        $.msg('HBO Max外挂字幕', '进入剧集详情页', msg)
+        notify('HBO Max外挂字幕', '进入剧集详情页', msg)
         $.setdata(seasonNo, "hbomax_seasonNo")
         $.setdata(epNo, "hbomax_epNo")
         $.setdata(seriesName, "hbomax_seriesName")
@@ -162,9 +162,21 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
             $.log(resp.body)
             const root = JSON.parse(resp.body)
             if (root.count) {
-                $.msg('HBO MAX外挂字幕', '剧集信息已保存', `[${series_name}] [${asset_id}] S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`)
+                notify('HBO MAX外挂字幕', '剧集信息已保存', `[${series_name}] [${asset_id}] S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`)
             }
             $.done({})
+        })
+    }
+
+    function notify(title, subtitle, message, to_phone=true) {
+        $.msg(title, subtitle, message)
+
+        const opts = {
+            'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
+            'body': { title: `${title} - ${subtitle}`, message: message }
+        }
+        $.http.post(opts).then(resp => {
+            $.log('[Gotify]', resp.body)
         })
     }
 
