@@ -101,6 +101,7 @@
         else {
             $.setdata('', 'paramount_hd_hls_url')
         }
+        $.done({})
     }
     else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
         const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '&__force_bitrate=true'
