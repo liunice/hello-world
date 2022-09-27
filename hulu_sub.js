@@ -89,6 +89,35 @@
             $.done({ body: vttBody, headers: newHeaders, status: 200 })
         }
     }
+    else if (/manifest\-dp\.hulustream\.com\/hls\/\d+\.m3u8\?.*?&auth=\w+&__force_bitrate=true/.test($request.url)) {
+        const body = $response.body
+        // force highest bitrate
+        // #EXT-X-STREAM-INF:BANDWIDTH=7428365,RESOLUTION=1920x1080,AVERAGE-BANDWIDTH=3185815,CODECS="avc1.640028,mp4a.40.5",FRAME-RATE=23.976,AUDIO="da-audio-AAC",SUBTITLES="subs",VIDEO-RANGE="SDR"
+        const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
+        const range = hdr ? '(PQ|SDR)' : '(SDR)'
+        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
+        const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?VIDEO-RANGE=${range}`).test(body) ? '3840x2160' : '1920x1080'
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+".*?,VIDEO-RANGE=${range}\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
+        const maxrate = Math.max(...bitrates)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
+        if (m) {
+            $.log(`found ${resolution} with url:`, m[4])
+            $.setdata(m[4], 'hulu_hd_hls_url')
+            $.msg('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
+        }
+        $.done({})
+    }
+    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
+        const hd_url = ($.getdata('hulu_hd_hls_url') || $request.url) + '&__force_bitrate=true'
+        const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
+        const headers = { "Location": hd_url };
+        const resp = {
+            status: status,
+            headers: headers
+        }
+        $.log('video hls url redirected to:', hd_url)
+        $.done(resp)
+    }
     else if (/\/webvtt\?asset_id=(\d+)/.test($request.url)) {
         const asset_id = /\/webvtt\?asset_id=(\d+)/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=hulu&asset_id=${asset_id}`)
@@ -119,7 +148,7 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
 `
         $.done({ body: body })
     }
-    else if (/\/v\d+\/hls\/\d+\/.*?\.m3u8\?/.test($request.url)) {
+    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+&__force_bitrate=true/.test($request.url)) {
         // strip all previously, trailers from the beginning
         const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)

@@ -50,6 +50,7 @@
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=.*?&__force_bitrate=true/.test($request.url)) {
         const body = $response.body
         // force highest bitrate
+        // #EXT-X-STREAM-INF:BANDWIDTH=12329587,AVERAGE-BANDWIDTH=8339265,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,AUDIO="aac",CLOSED-CAPTIONS=NONE,SUBTITLES="vtt",FRAME-RATE=23.976,VIDEO-RANGE=SDR
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
         const range = hdr ? '(PQ|SDR)' : '(SDR)'
         const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
