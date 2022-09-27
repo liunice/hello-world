@@ -151,7 +151,8 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
 `
         $.done({ body: body })
     }
-    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
+    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url) 
+            && $request.url != $.getdata('hulu_hd_hls_url')) {
         let body = $response.body
         // download hd m3u8 if any
         const hd_url = $.getdata('hulu_hd_hls_url')
