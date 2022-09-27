@@ -1,0 +1,23 @@
+#!name=Paramount+外挂字幕
+#!desc=请将.srt格式字幕文件按命名规范放在NAS指定目录下
+
+[MITM]
+hostname = %APPEND% pubads.g.doubleclick.net link.theplatform.com vod*.cbsaavideo.com
+
+#[Rule]
+#URL-REGEX,^https:\/\/ap(p|i)\.bilibili\.com\/,REJECT
+#DOMAIN,adimg.vue.weibo.com,REJECT
+#AND,((URL-REGEX,\/amdc\/mobileDispatch),(USER-AGENT,%E6%89%8B%E6%9C%BA%E6%B7%98%E5%AE%9D*)),REJECT
+
+[URL Rewrite]
+#(?<=_region=)CN(?=&) JP 307
+^(https:\/\/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/master\.m3u8)$ $1?__force_bitrate=true 302
+
+[Script]
+#http-response ^http://www.example.com/test script-path=test.js,requires-body=true,max-size=-1,script-update-interval=0
+#episode-page = type=http-response,pattern=^https:\/\/comet\.api\.hbo\.com\/express\-content,requires-body=1,script-path=hbomax_sub.js
+http-response ^https:\/\/pubads\.g\.doubleclick\.net\/ondemand\/hls\/content\/.*?\/\d+\-\d+\.vtt$ script-path=https://raw.githubusercontent.com/liunice/hello-world/master/paramount_sub.js,requires-body=true
+http-response ^https:\/\/link\.theplatform\.com\/s\/\w+\/\w+\?format=SMIL script-path=https://raw.githubusercontent.com/liunice/hello-world/master/paramount_sub.js,requires-body=true
+http-response ^https:\/\/vod\-.*?\.cbsaavideo\.com\/intl_vms\/.*?\/seg_\d+\.vtt$ script-path=https://raw.githubusercontent.com/liunice/hello-world/master/paramount_sub.js,requires-body=true
+http-response ^https:\/\/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/master\.m3u8\?__force_bitrate=true script-path=https://raw.githubusercontent.com/liunice/hello-world/master/paramount_sub.js,requires-body=true
+http-response ^https:\/\/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$ script-path=https://raw.githubusercontent.com/liunice/hello-world/master/paramount_sub.js,requires-body=true
