@@ -87,17 +87,6 @@
             $.done({})
         }
     }
-    // else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
-    //     const hd_url = ($.getdata('hbomax_hd_hls_url') || $request.url) + '&__force_bitrate=true'
-    //     const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
-    //     const headers = { "Location": hd_url };
-    //     const resp = {
-    //         status: status,
-    //         headers: headers
-    //     }
-    //     $.log('video hls url redirected to:', hd_url)
-    //     $.done(resp)
-    // }
     else if (/\/express\-content\/urn\:hbo\:page\:.*?\:type\:episode\?/.test($request.url)) {
         const root = JSON.parse($response.body)
         const episode = root[0]['body']['metadata']['hadron-legacy-telemetry']
