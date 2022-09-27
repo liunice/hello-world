@@ -156,16 +156,17 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
         // download hd m3u8 if any
         const hd_url = $.getdata('hulu_hd_hls_url')
         if (hd_url) {
+            $.log('using hd url:', hd_url)
             body = await getBody(hd_url)
         }
 
         // strip all previously, trailers from the beginning
-        body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
+        body = body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
 
         // calculate trailer duration (only once)
         let duration = 0
-        const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec($response.body)
+        const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec(body)
         if (mid) {
             // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
             const parts = [...mid[2].matchAll(/#EXTINF:([\d\.]+)\,/g)]
