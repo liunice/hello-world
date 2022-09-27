@@ -12,14 +12,14 @@
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?\s+(.+)`, 'g').exec(body)
         if (m) {
             body = body.replace(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(?!${maxrate}).*?\s+.+`, 'g'), '')
-            $.log(body)
+            body = body.replace(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=${maxrate}`, 'g'), '#EXT-X-STREAM-INF:BANDWIDTH=783000')
+            $.log(body)      
             notify('Prime Video外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"`)
             $.done({ body: body })
         }
         else {
-            $.setdata('', 'primevideo_hd_hls_url')
-        }
-        $.done({})
+            $.done({})
+        }  
     }
 
     function notify(title, subtitle, message, to_phone = true) {
