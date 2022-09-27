@@ -92,7 +92,7 @@
         if (m) {
             let hd_url = m[4]
             if (!hd_url.startsWith('https://')) {
-                hd_url = $request.url.replace('master.m3u8', hd_url)
+                hd_url = $request.url.replace(/master\.m3u8.*?$/, hd_url)
             }
             $.log(`found ${resolution} with url:`, hd_url)
             $.setdata(hd_url, 'paramount_hd_hls_url')
@@ -119,7 +119,7 @@
         // download hd m3u8 for video
         if (body.indexOf('.ts') > -1) {
             const hd_url = $.getdata('paramount_hd_hls_url')
-            if (hd_url) {
+            if (hd_url && $request.url != hd_url) {
                 $.log('using hd video url:', hd_url)
                 body = await getBody(hd_url)
             }

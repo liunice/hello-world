@@ -156,7 +156,7 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
         // download hd m3u8 for video
         if (body.indexOf('_audio.mp4?') == -1) {
             const hd_url = $.getdata('hulu_hd_hls_url')
-            if (hd_url) {
+            if (hd_url && $request.url != hd_url) {
                 $.log('using hd video url:', hd_url)
                 body = await getBody(hd_url)
             }
