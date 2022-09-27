@@ -79,9 +79,8 @@
             $.setdata(epNo, "hbomax_epNo")
             $.setdata(seriesName, "hbomax_seriesName")
             $.msg('Hulu外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
+            $.done({})
         }
-
-        $.done({})
     }
     else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
         const hd_url = ($.getdata('hbomax_hd_hls_url') || $request.url) + '&__force_bitrate=true'
@@ -157,7 +156,7 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
             $.log(resp.body)
             const root = JSON.parse(resp.body)
             if (root.count) {
-                $.msg('HBO MAX外挂字幕', `剧集信息已保存`, `[${series_name}] S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`)
+                $.msg('HBO MAX外挂字幕', '剧集信息已保存', `[${series_name}] [${asset_id}] S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`)
             }
             $.done({})
         })
