@@ -110,17 +110,17 @@
         }
         $.done({})
     }
-    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
-        const hd_url = ($.getdata('hulu_hd_hls_url') || $request.url) + '&__force_bitrate=true'
-        const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
-        const headers = { "Location": hd_url };
-        const resp = {
-            status: status,
-            headers: headers
-        }
-        $.log('video hls url redirected to:', hd_url)
-        $.done(resp)
-    }
+    // else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
+    //     const hd_url = ($.getdata('hulu_hd_hls_url') || $request.url) + '&__force_bitrate=true'
+    //     const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
+    //     const headers = { "Location": hd_url };
+    //     const resp = {
+    //         status: status,
+    //         headers: headers
+    //     }
+    //     $.log('video hls url redirected to:', hd_url)
+    //     $.done(resp)
+    // }
     else if (/\/webvtt\?asset_id=(\d+)/.test($request.url)) {
         const asset_id = /\/webvtt\?asset_id=(\d+)/.exec($request.url)[1]
         const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=hulu&asset_id=${asset_id}`)
@@ -151,9 +151,16 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
 `
         $.done({ body: body })
     }
-    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+&__force_bitrate=true/.test($request.url)) {
+    else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
+        let body = $response.body
+        // download hd m3u8 if any
+        const hd_url = $.getdata('hulu_hd_hls_url')
+        if (hd_url) {
+            body = await getBody(hd_url)
+        }
+
         // strip all previously, trailers from the beginning
-        const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
+        body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
 
         // calculate trailer duration (only once)
