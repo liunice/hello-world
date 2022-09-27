@@ -152,6 +152,10 @@
         }
     }
 
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     function msToStr(ms, webvtt = true) {
         // 00:00:10,120
         const hour = Math.floor(ms / (60 * 60 * 1000))
