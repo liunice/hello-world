@@ -42,25 +42,24 @@
         $.log(vttBody)
 
         // return response
-        var newHeaders = $request.headers;
+        let newHeaders = $request.headers;
         newHeaders['Content-Type'] = 'application/vnd.apple.mpegurl';
-        if ($.isQuanX()) {
-            $.done({ body: vttBody, headers: newHeaders, status: 'HTTP/1.1 200 OK' })
-        }
-        else {
-            $.done({ body: vttBody, headers: newHeaders, status: 200 })
-        }
+        const status = $.isQuanX() ? 'HTTP/1.1 200 OK' : 200
+        $.done({ body: vttBody, headers: newHeaders, status: status })
     }
-    else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=/.test($request.url)) {
+    else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=.*?&__force_bitrate=true/.test($request.url)) {
         const body = $response.body
-        const resolution = /RESOLUTION=3840x2160,.*?AUDIO="ac3",.*?VIDEO-RANGE=SDR/.test(body) ? '3840x2160' : '1920x1080'
-        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="(?:avc|hvc)[^"]+",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=SDR\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
+        const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
+        const range = hdr ? '(PQ|SDR)' : '(SDR)'
+        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
+        const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?AUDIO="ac3",.*?VIDEO-RANGE=${range}`).test(body) ? '3840x2160' : '1920x1080'
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
-        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=SDR\s+(https:\/\/.+)`, 'g').exec(body)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
         if (m) {
             $.log(`found ${resolution}:`, m[3])
             $.setdata(m[3], 'hbomax_hd_hls_url')
-            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}"`)
+            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[4]}`)
         }
         $.done({})
     }
