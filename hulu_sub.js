@@ -96,10 +96,10 @@
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
         const range = hdr ? '(PQ|SDR)' : '(SDR)'
         const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
-        const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?VIDEO-RANGE=${range}`).test(body) ? '3840x2160' : '1920x1080'
-        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+".*?,VIDEO-RANGE=${range}\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
+        const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?VIDEO-RANGE="${range}"`).test(body) ? '3840x2160' : '1920x1080'
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+".*?,VIDEO-RANGE="${range}"\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
-        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)".*?,VIDEO-RANGE="${range}"\s+(https:\/\/.+)`, 'g').exec(body)
         if (m) {
             $.log(`found ${resolution} with url:`, m[4])
             $.setdata(m[4], 'hulu_hd_hls_url')
