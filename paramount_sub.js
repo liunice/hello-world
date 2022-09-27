@@ -83,7 +83,7 @@
         // SDR => #EXT-X-STREAM-INF:BANDWIDTH=6196650,AVERAGE-BANDWIDTH=4909758,CODECS="avc1.640028,ac-3",RESOLUTION=1920x1080,FRAME-RATE=23.981,AUDIO="audio_ac3",SUBTITLES="cbsi_webvtt"
         // HDR => #EXT-X-STREAM-INF:BANDWIDTH=12791948,AVERAGE-BANDWIDTH=9801831,CODECS="dvh1.05.06,ec-3",RESOLUTION=3840x2160,FRAME-RATE=23.976,VIDEO-RANGE=PQ,AUDIO="audio_ec3",SUBTITLES="cbsi_webvtt",CLOSED-CAPTIONS=NONE
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
-        const range = hdr ? '(,VIDEO-RANGE=PQ)' : '()'
+        const range = hdr ? '(,VIDEO-RANGE=PQ)' : ',FRAME-RATE=[^,]+(),(?!VIDEO-RANGE=PQ)'
         const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
         const resolution = RegExp(String.raw`RESOLUTION=3840x2160.*?${range}`).test(body) ? '3840x2160' : '1920x1080'
         const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?${range}\s+.+`, 'g'))].map(s => parseInt(s[1]))
@@ -103,17 +103,6 @@
         }
         $.done({})
     }
-    // else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
-    //     const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '?__force_bitrate=true'
-    //     const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
-    //     const headers = { "Location": hd_url };
-    //     const resp = {
-    //         status: status,
-    //         headers: headers
-    //     }
-    //     $.log('video hls url redirected to:', hd_url)
-    //     $.done(resp)
-    // }
     else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
         let body = $response.body
         // download hd m3u8 for video
