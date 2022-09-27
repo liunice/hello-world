@@ -114,7 +114,7 @@
     //     $.log('video hls url redirected to:', hd_url)
     //     $.done(resp)
     // }
-    else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8\?__force_bitrate=true/.test($request.url)) {
+    else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
         let body = $response.body
         // download hd m3u8 for video
         if (body.indexOf('.ts') > -1) {
