@@ -1,7 +1,7 @@
 (async () => {
     const $ = Env("primevideo_sub.js")
 
-    if (/.*?\.cf\.hls\.row\.aiv-cdn\.net\/dm\/.*?\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
+    if (/\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
         let body = $response.body
         // force highest bitrate
         // #EXT-X-STREAM-INF:BANDWIDTH=13380000,AVERAGE-BANDWIDTH=8858000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,FRAME-RATE=23.976,AUDIO="audio-aacl-128",CLOSED-CAPTIONS=NONE,SUBTITLES="textstream-ttml-1"
