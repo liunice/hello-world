@@ -1,7 +1,7 @@
 (async () => {
     const $ = Env("primevideo_sub.js")
 
-    if (/.*?\.cf\.hls\.row\.aiv-cdn\.net\/dm\/.*?\/[\w\-]+\.m3u8$/.test($request.url)) {
+    if (/.*?\.cf\.hls\.row\.aiv-cdn\.net\/dm\/.*?\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
         const body = $response.body
         // force highest bitrate
         // #EXT-X-STREAM-INF:BANDWIDTH=13380000,AVERAGE-BANDWIDTH=8858000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,FRAME-RATE=23.976,AUDIO="audio-aacl-128",CLOSED-CAPTIONS=NONE,SUBTITLES="textstream-ttml-1"
@@ -11,7 +11,10 @@
         const maxrate = Math.max(...bitrates)
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?\s+(.+)`, 'g').exec(body)
         if (m) {
-            const hd_url = m[3]
+            let hd_url = m[3]
+            if (!hd_url.startsWith('https://')) {
+                hd_url = $request.url.replace(/[\w\-]+\.m3u8$/, hd_url)
+            }
             $.log(`found ${resolution} with url:`, hd_url)
             $.setdata(hd_url, 'primevideo_hd_hls_url')
             notify('Prime Video外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"`)
@@ -19,8 +22,9 @@
         else {
             $.setdata('', 'primevideo_hd_hls_url')
         }
+        $.done({})
     }
-    else if (/.*?\.cf\.hls\.row\.aiv-cdn\.net\/dm\/.*?\/[\w\-]*?_v\d+\.m3u8$/.test($request.url)) {
+    else if (/.*?\.cf\.hls\.row\.aiv-cdn\.net\/dm\/.*?\/[a-z0-9\-]*?_v\d+\.m3u8$/.test($request.url)) {
         const hd_url = $.getdata('primevideo_hd_hls_url')
         if (hd_url && $request.url != hd_url) {
             $.log('using hd video url:', hd_url)
@@ -48,39 +52,8 @@
         return $.http.get(url).then(resp => resp.body)
     }
 
-    function getConfig(confBody, key, epInfo) {
-        const realKey = epInfo ? `${epInfo}:${key}=(.+)` : `${key}=(\\.+)`
-        const m = new RegExp(realKey, 'i').exec(confBody)
-        if (m) {
-            return m[1]
-        }
-        else if (epInfo) {
-            const m0 = new RegExp(`${key}=(.+)`, 'i').exec(confBody)
-            return m0 ? m0[1] : null
-        }
-    }
-
-    function msToStr(ms, webvtt = true) {
-        // 00:00:10,120
-        const hour = Math.floor(ms / (60 * 60 * 1000))
-        const minutes = Math.floor((ms - hour * 60 * 60 * 1000) / (60 * 1000))
-        const seconds = Math.floor((ms - hour * 60 * 60 * 1000 - minutes * 60 * 1000) / (1000))
-        const milliseconds = ms % 1000
-        return hour.toString().padStart(2, '0')
-            + ':' + minutes.toString().padStart(2, '0')
-            + ':' + seconds.toString().padStart(2, '0')
-            + (webvtt ? '.' : ',') + milliseconds.toString().padStart(3, '0')
-    }
-
-    function strToMS(str, webvtt = false) {
-        // 00:00:10,120
-        const pts = str.split(webvtt ? '.' : ',')
-        var ts = parseInt(pts[1])
-        const parts = pts[0].split(':')
-        for (const [i, val] of parts.entries()) {
-            ts += 1000 * (60 ** (2 - i)) * parseInt(val);
-        }
-        return ts
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     // prettier-ignore
