@@ -57,9 +57,9 @@
         const maxrate = Math.max(...bitrates)
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
         if (m) {
-            $.log(`found ${resolution}:`, m[3])
-            $.setdata(m[3], 'hbomax_hd_hls_url')
-            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[4]}`)
+            $.log(`found ${resolution} with url:`, m[4])
+            $.setdata(m[4], 'hbomax_hd_hls_url')
+            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
         $.done({})
     }
