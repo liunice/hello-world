@@ -63,6 +63,9 @@
             $.setdata(m[4], 'hbomax_hd_hls_url')
             $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
+        else {
+            $.setdata('', 'hbomax_hd_hls_url')
+        }
 
         // get asset_id from db, if not there, save this new episode
         const asset_id = /&r\.manifest=videos%2F(\w+)%2F/.exec($request.url)[1]

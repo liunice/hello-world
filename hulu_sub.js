@@ -105,6 +105,9 @@
             $.setdata(m[4], 'hulu_hd_hls_url')
             $.msg('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
+        else {
+            $.setdata('', 'hulu_hd_hls_url')
+        }
         $.done({})
     }
     else if (/manifest\-dp\.hulustream\.com\/v\d+\/hls\/\d+\/.*?\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
