@@ -103,7 +103,7 @@
         if (m) {
             $.log(`found ${resolution} with url:`, m[4])
             $.setdata(m[4], 'hulu_hd_hls_url')
-            $.msg('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
+            $.msg('Hulu外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
         else {
             $.setdata('', 'hulu_hd_hls_url')
@@ -224,6 +224,10 @@ https://manifest-dp.hulustream.com/subtitles/${encodeURIComponent(seriesName)}/S
             const m0 = new RegExp(`${key}=(.+)`, 'i').exec(confBody)
             return m0 ? m0[1] : null
         }
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     function msToStr(ms, webvtt = true) {

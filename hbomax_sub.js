@@ -61,7 +61,7 @@
         if (m) {
             $.log(`found ${resolution} with url:`, m[4])
             $.setdata(m[4], 'hbomax_hd_hls_url')
-            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
+            $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
         else {
             $.setdata('', 'hbomax_hd_hls_url')
@@ -180,6 +180,10 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
             const m0 = new RegExp(`${key}=(.+)`, 'i').exec(confBody)
             return m0 ? m0[1] : null
         }
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     function msToStr(ms, webvtt = true) {
