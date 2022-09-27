@@ -90,7 +90,7 @@
         const maxrate = Math.max(...bitrates)
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?${range}\s+(.+)`, 'g').exec(body)
         if (m) {
-            const hd_url = m[4]
+            let hd_url = m[4]
             if (!hd_url.startsWith('https://')) {
                 hd_url = $request.url.replace('master.m3u8', hd_url)
             }
