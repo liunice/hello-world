@@ -89,7 +89,7 @@
             $.done({ body: vttBody, headers: newHeaders, status: 200 })
         }
     }
-    else if (/manifest\-dp\.hulustream\.com\/hls\/\d+\.m3u8\?.*?&auth=\w+&__force_bitrate=true/.test($request.url)) {
+    else if (/manifest\-dp\.hulustream\.com\/hls\/\d+\.m3u8\?.*?&auth=\w+$/.test($request.url)) {
         const body = $response.body
         // force highest bitrate
         // #EXT-X-STREAM-INF:BANDWIDTH=7428365,RESOLUTION=1920x1080,AVERAGE-BANDWIDTH=3185815,CODECS="avc1.640028,mp4a.40.5",FRAME-RATE=23.976,AUDIO="da-audio-AAC",SUBTITLES="subs",VIDEO-RANGE="SDR"
