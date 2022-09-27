@@ -123,7 +123,7 @@
                 $.log('using hd video url:', hd_url)
                 body = await getBody(hd_url)
                 // use absolute path for video clips
-                body = body.replace(/(\s+)(seg_\d+\.ts)/, '$1' + $request.url.replace('stream.m3u8', '') + '$2')
+                body = body.replace(/(\s+)(seg_\d+\.ts)/, '$1' + hd_url.replace('stream.m3u8', '') + '$2')
             }
         }
 
