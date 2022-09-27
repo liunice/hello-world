@@ -10,13 +10,13 @@
             "name": "HBO MAX外挂字幕",
             "descs_html": [],
             "keys": [
-                "seriesName",
-                "seasonNo",
-                "epNo"
+                "hbomax_seriesName",
+                "hbomax_seasonNo",
+                "hbomax_epNo"
             ],
             "settings": [
                 {
-                    "id": "seriesName",
+                    "id": "hbomax_seriesName",
                     "name": "剧集英文名",
                     "val": "Pretty Little Liars",
                     "type": "selects",
@@ -41,14 +41,14 @@
                     ]
                 },
                 {
-                    "id": "seasonNo",
+                    "id": "hbomax_seasonNo",
                     "name": "Season编号",
                     "val": 1,
                     "type": "text",
                     "desc": "从HBO MAX接口处获取或手动设置"
                 },
                 {
-                    "id": "epNo",
+                    "id": "hbomax_epNo",
                     "name": "单集编号",
                     "val": 1,
                     "type": "text",
