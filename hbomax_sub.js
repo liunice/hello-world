@@ -53,8 +53,13 @@
         // #EXT-X-STREAM-INF:BANDWIDTH=12329587,AVERAGE-BANDWIDTH=8339265,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,AUDIO="aac",CLOSED-CAPTIONS=NONE,SUBTITLES="vtt",FRAME-RATE=23.976,VIDEO-RANGE=SDR
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
         const range = hdr ? '(PQ|SDR)' : '(SDR)'
-        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
         const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?AUDIO="ac3",.*?VIDEO-RANGE=${range}`).test(body) ? '3840x2160' : '1920x1080'
+        if (resolution == '3840x2160') {
+            $.setdata('', 'hbomax_hd_hls_url')
+            $.done({})
+            return
+        }
+        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
         const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
