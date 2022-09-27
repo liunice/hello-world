@@ -127,16 +127,28 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
 `
         $.done({ body: body })
     }
-    else if (/\/hlsMedia\.m3u8\?r\.host=.*?a\d+\.m3u8&r\.origin=cmaf$/.test($request.url)
-        || /\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf&__force_bitrate=true$/.test($request.url)) {
+    else if (/\/hlsMedia\.m3u8\?r\.host=.*?(a|v)\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
+        // || /\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf&__force_bitrate=true$/.test($request.url)) {
+        const is_video = /\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)
+        let body = $response.body
+        
+        // download hd m3u8 for video
+        if (is_video) {
+            const hd_url = $.getdata('hbomax_hd_hls_url')
+            if (hd_url && $request.url != hd_url) {
+                $.log('using hd video url:', hd_url)
+                body = await getBody(hd_url)
+            }
+        }
+
         // strip all trailers from the beginning
-        const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
+        body = body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
         // console.log(body)
 
         // calculate trailer duration (only once)
-        if (/\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
+        if (is_video) {
             let duration = 0
-            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec($response.body)
+            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec(body)
             if (mid) {
                 $.log(mid[2])
                 // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
