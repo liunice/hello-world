@@ -11,15 +11,16 @@
         const maxrate = Math.max(...bitrates)
         const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?\s+(.+)`, 'g').exec(body)
         if (m) {
-            body = body.replace(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(?!${maxrate}).*?\s+.+`, 'g'), '')
-            body = body.replace(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=${maxrate}`, 'g'), '#EXT-X-STREAM-INF:BANDWIDTH=783000')
+            body = body.replace(RegExp(String.raw`#AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=.*?\s+#EXT-X-STREAM-INF:BANDWIDTH=(?!${maxrate}).*?\s+.+`, 'g'), '')
             $.log(body)      
             notify('Prime Video外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"`)
             $.done({ body: body })
         }
         else {
             $.done({})
-        }  
+        } 
+        // body = body.replace(RegExp(String.raw`#AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=.*?\s+#EXT-X-STREAM-INF:BANDWIDTH.*?,RESOLUTION=(?!1280x720|1920x1080).*?\s+.+`, 'g'), '')
+        // $.done({ body: body })
     }
 
     function notify(title, subtitle, message, to_phone = true) {
