@@ -17,7 +17,7 @@
 
             if (getConfig(confBody, 'strip_trailers', epInfo) == 'false') {
                 // subtitle contains trailer
-                offset -= parseInt($.getdata('trailers_duration') || '0')
+                offset -= parseInt($.getdata('hbomax_trailers_duration') || '0')
             }
             $.log('offset = ' + offset)
         }
@@ -49,6 +49,7 @@
     }
     else if (/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=.*?&__force_bitrate=true/.test($request.url)) {
         const body = $response.body
+        // force highest bitrate
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
         const range = hdr ? '(PQ|SDR)' : '(SDR)'
         const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
@@ -61,6 +62,25 @@
             $.setdata(m[4], 'hbomax_hd_hls_url')
             $.msg('HBO Max外挂字幕', `已强制${resolution}`, `BANDWIDTH=${m[1]},CODECS="${m[2]}",VIDEO-RANGE=${m[3]}`)
         }
+
+        // get asset_id from db, if not there, save this new episode
+        const asset_id = /&r\.manifest=videos%2F(\w+)%2F/.exec($request.url)[1]
+        $.log('asset_id = ', asset_id)
+        const epBody = await getBody(`https://api.miffysoft.cn/tv_shows/episode/?platform=hbomax&asset_id=${asset_id}`)
+        const root = JSON.parse(epBody)
+        if (!root) {
+            addEpisode($.getdata("hbomax_seasonNo"), $.getdata("hbomax_epNo"), asset_id, $.getdata("hbomax_seriesName"))
+        }
+        else {
+            const seasonNo = root['season'].padStart(2, '0')
+            const epNo = root['episode'].padStart(2, '0')
+            const seriesName = root['series_name']
+            $.setdata(seasonNo, "hbomax_seasonNo")
+            $.setdata(epNo, "hbomax_epNo")
+            $.setdata(seriesName, "hbomax_seriesName")
+            $.msg('Hulu外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
+        }
+
         $.done({})
     }
     else if (/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?v\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
@@ -82,16 +102,15 @@
         const seriesName = episode['seriesName']
         const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${epNo.padStart(2, '0')}`
         $.msg('HBO Max外挂字幕', '进入剧集详情页', msg)
-        $.setdata(seasonNo, "seasonNo")
-        $.setdata(epNo, "epNo")
-        $.setdata(seriesName, "seriesName")
-        $.setdata('', 'hbomax_hd_hls_url')
+        $.setdata(seasonNo, "hbomax_seasonNo")
+        $.setdata(epNo, "hbomax_epNo")
+        $.setdata(seriesName, "hbomax_seriesName")
         $.done({});
     }
     else if (/\/hlsMedia\.m3u8\?r\.host=.*?t\d+\.m3u8&r\.origin=cmaf$/.test($request.url)) {
-        const seriesName = encodeURIComponent($.getdata("seriesName"))
-        const seasonNo = $.getdata("seasonNo").padStart(2, '0')
-        const epNo = $.getdata("epNo").padStart(2, '0')
+        const seriesName = encodeURIComponent($.getdata("hbomax_seriesName"))
+        const seasonNo = $.getdata("hbomax_seasonNo").padStart(2, '0')
+        const epNo = $.getdata("hbomax_epNo").padStart(2, '0')
 
         const body = `#EXTM3U
 #EXT-X-VERSION:6
@@ -123,9 +142,25 @@ https://manifests.api.hbo.com/subtitles/${seriesName}/S${seasonNo}/S${seasonNo}E
                 }
                 $.log('trailers_duration = ' + duration)
             }
-            $.setdata(duration.toString(), 'trailers_duration')
+            $.setdata(duration.toString(), 'hbomax_trailers_duration')
         }
         $.done({ body: body })
+    }
+
+    function addEpisode(season, episode, asset_id, series_name) {
+        const opts = {
+            'url': 'https://api.miffysoft.cn/tv_shows/episodes/add?platform=hbomax',
+            'headers': { 'Content-Type': 'application/json' },
+            'body': JSON.stringify([{ season, episode, asset_id, series_name }])
+        }
+        $.http.post(opts).then(resp => {
+            $.log(resp.body)
+            const root = JSON.parse(resp.body)
+            if (root.count) {
+                $.msg('HBO MAX外挂字幕', `剧集信息已保存`, `[${series_name}] S${season.padStart(2, '0')}E${episode.padStart(2, '0')}`)
+            }
+            $.done({})
+        })
     }
 
     function getBody(url) {
