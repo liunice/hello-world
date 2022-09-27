@@ -86,9 +86,9 @@
         const range = hdr ? '(,VIDEO-RANGE=PQ)' : ',FRAME-RATE=[^,]+(),(?!VIDEO-RANGE=PQ)'
         const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
         const resolution = RegExp(String.raw`RESOLUTION=3840x2160.*?${range}`).test(body) ? '3840x2160' : '1920x1080'
-        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?${range}\s+.+`, 'g'))].map(s => parseInt(s[1]))
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?${range}.*?\s+.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
-        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?${range}\s+(.+)`, 'g').exec(body)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?${range}.*?\s+(.+)`, 'g').exec(body)
         if (m) {
             let hd_url = m[4]
             if (!hd_url.startsWith('https://')) {
