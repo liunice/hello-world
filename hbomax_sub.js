@@ -78,7 +78,7 @@
             $.setdata(seasonNo, "hbomax_seasonNo")
             $.setdata(epNo, "hbomax_epNo")
             $.setdata(seriesName, "hbomax_seriesName")
-            $.msg('Hulu外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
+            $.msg('HBO MAX外挂字幕', '正在播放剧集', `[${seriesName}] [${asset_id}] S${seasonNo}E${epNo}`)
             $.done({})
         }
     }
