@@ -16,7 +16,7 @@ hostname = %APPEND% manifests.api.hbo.com, comet.api.hbo.com
 [Script]
 #http-response ^http://www.example.com/test script-path=test.js,requires-body=true,max-size=-1,script-update-interval=0
 #episode-page = type=http-response,pattern=^https:\/\/comet\.api\.hbo\.com\/express\-content,requires-body=1,script-path=hbomax_sub.js
-http-response ^https:\/\/comet\.api\.hbo\.com\/express\-content\/urn:hbo:page:\w+:type:episode\? script-path=https://raw.githubusercontent.com/liunice/hello-world/master/hbomax_sub.js,requires-body=true,script-update-interval=0
-http-response ^https:\/\/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=.*?&r.origin=cmaf&__force_bitrate=true script-path=https://raw.githubusercontent.com/liunice/hello-world/master/hbomax_sub.js,requires-body=true,script-update-interval=0
-http-response ^https:\/\/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?(t|a|v)\d+\.m3u8&r\.origin=cmaf$ script-path=https://raw.githubusercontent.com/liunice/hello-world/master/hbomax_sub.js,requires-body=true,script-update-interval=0
-http-response ^https:\/\/manifests\.api\.hbo\.com\/subtitles\/.*?\.vtt$ script-path=https://raw.githubusercontent.com/liunice/hello-world/master/hbomax_sub.js,requires-body=true,script-update-interval=0
+http-response ^https:\/\/comet\.api\.hbo\.com\/express\-content\/urn:hbo:page:\w+:type:episode\? script-path=/Users/liunice/Downloads/quanx/hbomax_sub.js,requires-body=true,debug=true
+http-response ^https:\/\/manifests\.api\.hbo\.com\/hls\.m3u8\?f\.audioTrack=.*?&r.origin=cmaf&__force_bitrate=true script-path=/Users/liunice/Downloads/quanx/hbomax_sub.js,requires-body=true,debug=true
+http-response ^https:\/\/manifests\.api\.hbo\.com\/hlsMedia\.m3u8\?r\.host=.*?(t|a|v)\d+\.m3u8&r\.origin=cmaf$ script-path=/Users/liunice/Downloads/quanx/hbomax_sub.js,requires-body=true,debug=true
+http-response ^https:\/\/manifests\.api\.hbo\.com\/subtitles\/.*?\.vtt$ script-path=/Users/liunice/Downloads/quanx/hbomax_sub.js,requires-body=true,debug=true
