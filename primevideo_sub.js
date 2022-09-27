@@ -4,8 +4,9 @@
     if (/\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
         let body = $response.body
         // force highest bitrate
+        // #AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=10000000,NOMINAL_AUDIO_BITRATE=128000
         // #EXT-X-STREAM-INF:BANDWIDTH=13380000,AVERAGE-BANDWIDTH=8858000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,FRAME-RATE=23.976,AUDIO="audio-aacl-128",CLOSED-CAPTIONS=NONE,SUBTITLES="textstream-ttml-1"
-        const resolution = RegExp(String.raw`RESOLUTION=3840x2160`).test(body) ? '3840x2160' : '1920x1080'
+        const resolution = RegExp(String.raw`RESOLUTION=3840x`).test(body) ? '3840x' : '1920x'
         const vcodecs = '(?:avc|hvc)'
         const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?\s+.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
@@ -18,7 +19,8 @@
         }
         else {
             $.done({})
-        } 
+        }
+        // reserve only 720p & 1080p
         // body = body.replace(RegExp(String.raw`#AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=.*?\s+#EXT-X-STREAM-INF:BANDWIDTH.*?,RESOLUTION=(?!1280x720|1920x1080).*?\s+.+`, 'g'), '')
         // $.done({ body: body })
     }
