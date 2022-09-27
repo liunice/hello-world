@@ -42,6 +42,11 @@
             if (of) {
                 offset += parseInt(of)
             }
+
+            if (getConfig(confBody, 'strip_trailers', epInfo) == 'false') {
+                // subtitle contains trailer
+                offset -= parseInt($.getdata('paramount_trailers_duration') || '0')
+            }
             $.log('offset = ' + offset)
         }
         catch (err) {
@@ -71,6 +76,60 @@
             }
         }
         $.done({ body: vttBody })
+    }
+    else if (/https:\/\/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/master\.m3u8\?__force_bitrate=true/.test($request.url)) {
+        const body = $response.body
+        // force highest bitrate
+        // SDR => #EXT-X-STREAM-INF:BANDWIDTH=6196650,AVERAGE-BANDWIDTH=4909758,CODECS="avc1.640028,ac-3",RESOLUTION=1920x1080,FRAME-RATE=23.981,AUDIO="audio_ac3",SUBTITLES="cbsi_webvtt"
+        // HDR => #EXT-X-STREAM-INF:BANDWIDTH=12791948,AVERAGE-BANDWIDTH=9801831,CODECS="dvh1.05.06,ec-3",RESOLUTION=3840x2160,FRAME-RATE=23.976,VIDEO-RANGE=PQ,AUDIO="audio_ec3",SUBTITLES="cbsi_webvtt",CLOSED-CAPTIONS=NONE
+        const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
+        const range = hdr ? '(,VIDEO-RANGE=PQ)' : '()'
+        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
+        const resolution = RegExp(String.raw`RESOLUTION=3840x2160.*?${range}`).test(body) ? '3840x2160' : '1920x1080'
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?${range}\s+.+`, 'g'))].map(s => parseInt(s[1]))
+        const maxrate = Math.max(...bitrates)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?${range}\s+(.+)`, 'g').exec(body)
+        if (m) {
+            $.log(`found ${resolution} with url:`, m[4])
+            $.setdata(m[4], 'paramount_hd_hls_url')
+            $.msg('Paramount+外挂字幕', `已强制${resolution}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"${m[3]}`)
+        }
+        else {
+            $.setdata('', 'paramount_hd_hls_url')
+        }
+    }
+    else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
+        const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '&__force_bitrate=true'
+        const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
+        const headers = { "Location": hd_url };
+        const resp = {
+            status: status,
+            headers: headers
+        }
+        $.log('video hls url redirected to:', hd_url)
+        $.done(resp)
+    }
+    else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8\?__force_bitrate=true/.test($request.url)) {
+        // strip all trailers from the beginning
+        const body = $response.body.replace(/^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)[\s\S]*?(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/, '$1\r\n$2')
+        // console.log(body)
+
+        // calculate trailer duration (only once)
+        if (body.indexOf('.ts') > -1) {
+            let duration = 0
+            const mid = /^([\s\S]*?#EXT\-X\-TARGETDURATION:\d+)([\s\S]*?)(#EXT\-X\-KEY:METHOD=[\s\S]*?)$/.exec($response.body)
+            if (mid) {
+                $.log(mid[2])
+                // reference: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/matchAll
+                const parts = [...mid[2].matchAll(/#EXTINF:([\d\.]+)\,/g)]
+                for (const part of parts) {
+                    duration += Math.round(parseFloat(part[1]) * 1000)
+                }
+                $.log('trailers_duration = ' + duration)
+            }
+            $.setdata(duration.toString(), 'paramount_trailers_duration')
+        }
+        $.done({ body: body })
     }
 
     function getBody(url) {

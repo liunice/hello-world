@@ -57,7 +57,7 @@
         const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?AUDIO="ac3",.*?VIDEO-RANGE=${range}`).test(body) ? '3840x2160' : '1920x1080'
         const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
-        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="((?:avc|hvc)[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution},AUDIO="ac3".*?,VIDEO-RANGE=${range}\s+(https:\/\/.+)`, 'g').exec(body)
         if (m) {
             $.log(`found ${resolution} with url:`, m[4])
             $.setdata(m[4], 'hbomax_hd_hls_url')
