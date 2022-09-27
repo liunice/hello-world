@@ -104,7 +104,7 @@
         $.done({})
     }
     else if (/vod.*?\.cbsaavideo\.com\/intl_vms\/.*?\/stream\.m3u8$/.test($request.url)) {
-        const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '&__force_bitrate=true'
+        const hd_url = ($.getdata('paramount_hd_hls_url') || $request.url) + '?__force_bitrate=true'
         const status = $.isQuanX() ? "HTTP/1.1 302 Moved Temporarily" : 302;
         const headers = { "Location": hd_url };
         const resp = {
