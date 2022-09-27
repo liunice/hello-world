@@ -95,7 +95,7 @@
         // #EXT-X-STREAM-INF:BANDWIDTH=7428365,RESOLUTION=1920x1080,AVERAGE-BANDWIDTH=3185815,CODECS="avc1.640028,mp4a.40.5",FRAME-RATE=23.976,AUDIO="da-audio-AAC",SUBTITLES="subs",VIDEO-RANGE="SDR"
         const hdr = $request.url.indexOf('&__enable_hdr=true') > -1
         const range = hdr ? '(PQ|SDR)' : '(SDR)'
-        const vcodecs = hdr ? '(?:dvh|avc|hvc)' : '(?:avc|hvc)'
+        const vcodecs = hdr ? '(?:dvh|avc|hvc|hev)' : '(?:avc|hvc|hev)'
         const resolution = RegExp(String.raw`RESOLUTION=3840x2160,.*?VIDEO-RANGE="${range}"`).test(body) ? '3840x2160' : '1920x1080'
         const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),RESOLUTION=${resolution},AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+".*?,VIDEO-RANGE="${range}"\s+https:\/\/.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
