@@ -33,6 +33,8 @@
         }
         catch (err) {
             $.log(err)
+            $.done({})
+            return;
         }
 
         // download srt
