@@ -16,7 +16,7 @@
             notify('PrimeVideo外挂字幕', '正在播放', msg)
         }
         finally {
-            $done({});
+            $.done({});
         }
     }
     else if (/\/[\w\-]+\.vtt$/.test($request.url)) {
@@ -67,24 +67,19 @@
         // force highest bitrate
         // #AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=10000000,NOMINAL_AUDIO_BITRATE=128000
         // #EXT-X-STREAM-INF:BANDWIDTH=13380000,AVERAGE-BANDWIDTH=8858000,CODECS="avc1.640028,mp4a.40.2",RESOLUTION=1920x1080,FRAME-RATE=23.976,AUDIO="audio-aacl-128",CLOSED-CAPTIONS=NONE,SUBTITLES="textstream-ttml-1"
-        const resolution = RegExp(String.raw`RESOLUTION=3840x`).test(body) ? '3840x' : '1920x'
-        const p = { '1920x': '1080p', '3840x': '4K'}
         const vcodecs = '(?:avc|hvc)'
-        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+",RESOLUTION=${resolution}.*?\s+.+`, 'g'))].map(s => parseInt(s[1]))
+        const bitrates = [...body.matchAll(RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(\d+),AVERAGE-BANDWIDTH=\d+,CODECS="${vcodecs}[^"]+".*?\s+.+`, 'g'))].map(s => parseInt(s[1]))
         const maxrate = Math.max(...bitrates)
-        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=${resolution}.*?\s+(.+)`, 'g').exec(body)
+        const m = RegExp(String.raw`#EXT-X-STREAM-INF:BANDWIDTH=(${maxrate}),AVERAGE-BANDWIDTH=\d+,CODECS="(${vcodecs}[^"]+)",RESOLUTION=([\dx]+).*?\s+(.+)`, 'g').exec(body)
         if (m) {
             body = body.replace(RegExp(String.raw`#AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=.*?\s+#EXT-X-STREAM-INF:BANDWIDTH=(?!${maxrate}).*?\s+.+`, 'g'), '')
             $.log(body)      
-            notify('Prime Video外挂字幕', `已强制${p[resolution]}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"`)
+            notify('Prime Video外挂字幕', `已强制${m[3]}`, `BANDWIDTH=${numberWithCommas(m[1])},CODECS="${m[2]}"`)
             $.done({ body: body })
         }
         else {
             $.done({})
         }
-        // reserve only 720p & 1080p
-        // body = body.replace(RegExp(String.raw`#AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=.*?\s+#EXT-X-STREAM-INF:BANDWIDTH.*?,RESOLUTION=(?!1280x|1920x).*?\s+.+`, 'g'), '')
-        // $.done({ body: body })
     }
 
     function notify(title, subtitle, message, to_phone = true) {
