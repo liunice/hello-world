@@ -1,5 +1,6 @@
 (async () => {
-    const subtitleHost = 'http://192.168.1.189'
+    // const subtitleHost = 'http://192.168.1.189'
+    const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("primevideo_sub.js")
 
     if (/.*?\.api\.amazonvideo\.com\/cdp\/catalog\/GetPlaybackResources\?.*?audioTrackId=/.test($request.url)) {

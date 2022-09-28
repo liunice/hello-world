@@ -1,5 +1,6 @@
 (async () => {
-    const subtitleHost = 'http://192.168.1.189';
+    // const subtitleHost = 'http://192.168.1.189';
+    const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("hulu_sub.js");
 
     if (/\/content\/v\d+\/hubs\/series\/([\w\-]+)\/season\/\d+\?/.test($request.url)) {

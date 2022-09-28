@@ -1,5 +1,6 @@
 (async () => {
-    const subtitleHost = 'http://192.168.1.189'
+    // const subtitleHost = 'http://192.168.1.189'
+    const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("paramount_sub.js")
 
     if (/link\.theplatform\.com\/s\/\w+\/\w+\?format=SMIL/.test($request.url)) {

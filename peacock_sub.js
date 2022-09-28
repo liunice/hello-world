@@ -1,5 +1,6 @@
 (async () => {
-    const subtitleHost = 'http://192.168.1.189'
+    // const subtitleHost = 'http://192.168.1.189'
+    const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("peacock_sub.js")
 
     if (/\/adapter\-calypso\/v\d+\/query\/node.*?represent=\(items/.test($request.url)) {
