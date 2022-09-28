@@ -40,7 +40,7 @@
         $.log("srt字幕下载成功！")
 
         // generate webvtt
-        var vttBody = 'WEBVTT\nX-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:9000\n\n'
+        var vttBody = 'WEBVTT\nX-TIMESTAMP-MAP=MPEGTS:900000,LOCAL:00:00:00.000\n\n'
         let lines = srtBody.split('\r\n')
         // $.log(lines)
         let idx = 0
