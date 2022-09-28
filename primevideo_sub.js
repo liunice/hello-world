@@ -84,7 +84,7 @@
     }
 
     function notify(title, subtitle, message, to_phone = true) {
-        $.msg(title, subtitle, message)
+        // $.msg(title, subtitle, message)
 
         const opts = {
             'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
