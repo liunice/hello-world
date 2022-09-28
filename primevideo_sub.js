@@ -106,7 +106,7 @@
                     throw err
                 }
                 else if (resp.statusCode == 404) {
-                    throw new Error(`404 Not Found: ${url}`)
+                    throw `404 Not Found: ${url}`
                 }
                 else {
                     resolve(body)
@@ -128,7 +128,7 @@
                         const { statusCode: status, statusCode, headers, body } = resp
                         callback(null, { status, statusCode, headers, body }, body)
                     },
-                    (err) => callback((err && err.error) || new Error('UndefinedError'))
+                    (err) => callback((err && err.error) || 'UndefinedError')
                 )
             } 
         })
