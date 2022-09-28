@@ -99,15 +99,38 @@
 
     function getBody(url) {
         // return $.http.get(url).then(resp => resp.body)
+        const opts = {url}
         return new Promise((resolve, reject) => {
-            $.http.get({ url }, (err, resp, body) => {
-                if (err || resp.statusCode == 404) {
-                    throw new Error(`request failed for url: ${url}`)
+            const callback = (err, resp, body) => {
+                if (err) {
+                    throw err
+                }
+                else if (resp.statusCode == 404) {
+                    throw new Error(`404 Not Found: ${url}`)
                 }
                 else {
                     resolve(body)
                 }
-            })
+            }
+
+            if ($.isSurge() || $.isLoon()) {
+                $httpClient.get(opts, (err, resp, body) => {
+                    if (!err && resp) {
+                        resp.body = body
+                        resp.statusCode = resp.status ? resp.status : resp.statusCode
+                        resp.status = resp.statusCode
+                    }
+                    callback(err, resp, body)
+                })
+            } else {
+                $task.fetch(opts).then(
+                    (resp) => {
+                        const { statusCode: status, statusCode, headers, body } = resp
+                        callback(null, { status, statusCode, headers, body }, body)
+                    },
+                    (err) => callback((err && err.error) || new Error('UndefinedError'))
+                )
+            } 
         })
     }
 
