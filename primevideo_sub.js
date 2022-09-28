@@ -1,4 +1,5 @@
 (async () => {
+    const subtitleHost = 'http://192.168.1.189'
     const $ = Env("primevideo_sub.js")
 
     if (/.*?\.api\.amazonvideo\.com\/cdp\/catalog\/GetPlaybackResources\?.*?audioTrackId=/.test($request.url)) {
@@ -32,7 +33,6 @@
         }
         catch (err) {
             $.log(err)
-            $.done()
         }
 
         // download srt
@@ -97,6 +97,18 @@
 
     function getBody(url) {
         return $.http.get(url).then(resp => resp.body)
+    }
+
+    function getConfig(confBody, key, epInfo) {
+        const realKey = epInfo ? `${epInfo}:${key}=(.+)` : `${key}=(\\.+)`
+        const m = new RegExp(realKey, 'i').exec(confBody)
+        if (m) {
+            return m[1]
+        }
+        else if (epInfo) {
+            const m0 = new RegExp(`${key}=(.+)`, 'i').exec(confBody)
+            return m0 ? m0[1] : null
+        }
     }
 
     function numberWithCommas(x) {
