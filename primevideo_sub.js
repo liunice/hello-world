@@ -5,15 +5,19 @@
 
     if (/.*?\.api\.amazonvideo\.com\/cdp\/catalog\/GetPlaybackResources\?.*?audioTrackId=/.test($request.url)) {
         const root = JSON.parse($response.body)
-        const seriesName = root['catalogMetadata']['family']['tvAncestors'][1]['catalog']['title'];
-        const seasonNo = root['catalogMetadata']['family']['tvAncestors'][0]['catalog']['seasonNumber'].toString();
-        const episodenNo = root['catalogMetadata']['catalog']['episodeNumber'].toString();
-        $.setdata(seriesName, 'primevideo_seriesName');
-        $.setdata(seasonNo, 'primevideo_seasonNo');
-        $.setdata(episodenNo, 'primevideo_epNo');
-        const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
-        notify('PrimeVideo外挂字幕', '正在播放', msg)
-        $done({});
+        try {
+            const seriesName = root['catalogMetadata']['family']['tvAncestors'][1]['catalog']['title'];
+            const seasonNo = root['catalogMetadata']['family']['tvAncestors'][0]['catalog']['seasonNumber'].toString();
+            const episodenNo = root['catalogMetadata']['catalog']['episodeNumber'].toString();
+            $.setdata(seriesName, 'primevideo_seriesName');
+            $.setdata(seasonNo, 'primevideo_seasonNo');
+            $.setdata(episodenNo, 'primevideo_epNo');
+            const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
+            notify('PrimeVideo外挂字幕', '正在播放', msg)
+        }
+        finally {
+            $done({});
+        }
     }
     else if (/\/[\w\-]+\.vtt$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("primevideo_seriesName"))
