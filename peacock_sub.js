@@ -31,8 +31,7 @@
         delete newHeaders['Date'];
         delete newHeaders['Access-Control-Expose-Headers'];
         newHeaders['Access-Control-Allow-Headers'] = 'X-SkyOTT-Proposition,X-SkyOTT-Language,X-SkyOTT-Device,X-SkyOTT-Platform,X-SkyOTT-Territory,X-SkyOTT-Entitlements,X-SkyOTT-Provider,X-SkyOTT-AB-ATOM,Keep-Alive,User-Agent,X-Requested-With';
-        $done({ status: 'HTTP/1.1 200 OK', headers: newHeaders });
-        // $done({})
+        $done({ status: $.isQuanX() ? 'HTTP/1.1 200 OK' : 200, headers: newHeaders });
     }
     else if (/\.cdn\.peacocktv\.com\/.*?\.webvtt$/.test($request.url)) {
         const seriesName = encodeURIComponent($.getdata("peacock_seriesName"))
@@ -139,7 +138,7 @@ https://g001-vod-us-cmaf-prd-cl.cdn.peacocktv.com/pub/global/DzG/2Sw/PCK_1623143
 
     function notify(title, subtitle, message, to_phone = true) {
         $.msg(title, subtitle, message)
-        
+
         const opts = {
             'url': 'http://localhost:8088/message?token=AIo_LwIt94c6894',
             'body': { title: `${title} - ${subtitle}`, message: message }

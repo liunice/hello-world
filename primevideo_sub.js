@@ -1,7 +1,64 @@
 (async () => {
     const $ = Env("primevideo_sub.js")
 
-    if (/\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
+    if (/.*?\.api\.amazonvideo\.com\/cdp\/catalog\/GetPlaybackResources\?.*?audioTrackId=/.test($request.url)) {
+        const root = JSON.parse($response.body)
+        const seriesName = root['catalogMetadata']['family']['tvAncestors'][1]['catalog']['title'];
+        const seasonNo = root['catalogMetadata']['family']['tvAncestors'][0]['catalog']['seasonNumber'].toString();
+        const episodenNo = root['catalogMetadata']['catalog']['episodeNumber'].toString();
+        $.setdata(seriesName, 'primevideo_seriesName');
+        $.setdata(seasonNo, 'primevideo_seasonNo');
+        $.setdata(episodenNo, 'primevideo_epNo');
+        const msg = `[${seriesName}] S${seasonNo.padStart(2, '0')}E${episodenNo.padStart(2, '0')}`
+        notify('PrimeVideo外挂字幕', '正在播放', msg)
+        $done({});
+    }
+    else if (/\/[\w\-]+\.vtt$/.test($request.url)) {
+        const seriesName = encodeURIComponent($.getdata("primevideo_seriesName"))
+        const seasonNo = $.getdata("primevideo_seasonNo").padStart(2, '0')
+        const epNo = $.getdata("primevideo_epNo").padStart(2, '0')
+
+        // get subtitle config (if any)
+        let offset = 0
+        const epInfo = `S${seasonNo}E${epNo}`
+        try {
+            var confBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/subtitle.conf`)
+            $.log(confBody)
+            const of = getConfig(confBody, 'offset', epInfo)
+            if (of) {
+                offset += parseInt(of)
+            }
+            $.log('offset = ' + offset)
+        }
+        catch (err) {
+            $.log(err)
+            $.done()
+        }
+
+        // download srt
+        const srtBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/${epInfo}.srt`)
+        $.log("srt字幕下载成功！")
+
+        // generate webvtt
+        var vttBody = 'WEBVTT\nX-TIMESTAMP-MAP=LOCAL:00:00:00.000,MPEGTS:9000\n\n'
+        let lines = srtBody.split('\r\n')
+        // $.log(lines)
+        let idx = 0
+        const rpl = (str => {
+            let line = msToStr(strToMS(str) + offset)
+            if (++idx % 2 == 0) {
+                line += ' line:85%';
+            }
+            return line;
+        })
+        for (const line of lines) {
+            if (!/^\d+$/.test(line)) {
+                vttBody += line.replace(/\d{2}:\d{2}:\d{2}\,\d{3}/g, rpl) + '\n'
+            }
+        }
+        $.done({ body: vttBody })
+    }
+    else if (/\/[a-z0-9\-]+\.m3u8$/.test($request.url)) {
         let body = $response.body
         // force highest bitrate
         // #AIV-STREAM-INF:NOMINAL_VIDEO_BITRATE=10000000,NOMINAL_AUDIO_BITRATE=128000
@@ -44,6 +101,29 @@
 
     function numberWithCommas(x) {
         return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function msToStr(ms, webvtt = true) {
+        // 00:00:10,120
+        const hour = Math.floor(ms / (60 * 60 * 1000))
+        const minutes = Math.floor((ms - hour * 60 * 60 * 1000) / (60 * 1000))
+        const seconds = Math.floor((ms - hour * 60 * 60 * 1000 - minutes * 60 * 1000) / (1000))
+        const milliseconds = ms % 1000
+        return hour.toString().padStart(2, '0')
+            + ':' + minutes.toString().padStart(2, '0')
+            + ':' + seconds.toString().padStart(2, '0')
+            + (webvtt ? '.' : ',') + milliseconds.toString().padStart(3, '0')
+    }
+
+    function strToMS(str, webvtt = false) {
+        // 00:00:10,120
+        const pts = str.split(webvtt ? '.' : ',')
+        var ts = parseInt(pts[1])
+        const parts = pts[0].split(':')
+        for (const [i, val] of parts.entries()) {
+            ts += 1000 * (60 ** (2 - i)) * parseInt(val);
+        }
+        return ts
     }
 
     // prettier-ignore
