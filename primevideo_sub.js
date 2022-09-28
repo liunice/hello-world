@@ -20,22 +20,19 @@
         const epNo = $.getdata("primevideo_epNo").padStart(2, '0')
 
         // get subtitle config (if any)
-        let offset = 0
-        const epInfo = `S${seasonNo}E${epNo}`
-        try {
-            var confBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/subtitle.conf`)
-            $.log(confBody)
-            const of = getConfig(confBody, 'offset', epInfo)
-            if (of) {
-                offset += parseInt(of)
-            }
-            $.log('offset = ' + offset)
-        }
-        catch (err) {
-            $.log(err)
+        const confReq = await $.http.get(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/subtitle.conf`)
+        if (confReq.statusCode == 404) {
+            $.log('subtitle.conf not found...')
             $.done({})
             return;
         }
+        const confBody = confReq.body
+        $.log(confBody)
+        const of = getConfig(confBody, 'offset', epInfo)
+        if (of) {
+            offset += parseInt(of)
+        }
+        $.log('offset = ' + offset)
 
         // download srt
         const srtBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/${epInfo}.srt`)
@@ -98,41 +95,7 @@
     }
 
     function getBody(url) {
-        // return $.http.get(url).then(resp => resp.body)
-        const opts = {url}
-        return new Promise((resolve, reject) => {
-            // const callback = (err, resp, body) => {
-            //     if (err) {
-            //         throw err
-            //     }
-            //     else if (resp.statusCode == 404) {
-            //         throw `404 Not Found: ${url}`
-            //     }
-            //     else {
-            //         resolve(body)
-            //     }
-            // }
-
-            // if ($.isSurge() || $.isLoon()) {
-            //     $httpClient.get(opts, (err, resp, body) => {
-            //         if (!err && resp) {
-            //             resp.body = body
-            //             resp.statusCode = resp.status ? resp.status : resp.statusCode
-            //             resp.status = resp.statusCode
-            //         }
-            //         callback(err, resp, body)
-            //     })
-            // } else {
-            //     $task.fetch(opts).then(
-            //         (resp) => {
-            //             const { statusCode: status, statusCode, headers, body } = resp
-            //             callback(null, { status, statusCode, headers, body }, body)
-            //         },
-            //         (err) => callback((err && err.error) || 'UndefinedError')
-            //     )
-            // } 
-            throw url
-        })
+        return $.http.get(url).then(resp => resp.body)
     }
 
     function getConfig(confBody, key, epInfo) {
