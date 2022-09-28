@@ -131,7 +131,7 @@
             //         (err) => callback((err && err.error) || 'UndefinedError')
             //     )
             // } 
-            resolve(url)
+            throw url
         })
     }
 
