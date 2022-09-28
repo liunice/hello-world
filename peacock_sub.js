@@ -1,5 +1,5 @@
 (async () => {
-    // const subtitleHost = 'http://192.168.1.189'
+    // const subtitleHost = 'http://192.168.1.189/subtitles'
     const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("peacock_sub.js")
 
@@ -43,7 +43,7 @@
         let offset = 0
         const epInfo = `S${seasonNo}E${epNo}`
         try {
-            var confBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/subtitle.conf`)
+            var confBody = await getBody(subtitleHost + `/${seriesName}/S${seasonNo}/subtitle.conf`)
             $.log(confBody)
             const of = getConfig(confBody, 'offset', epInfo)
             if (of) {
@@ -57,7 +57,7 @@
         }
 
         // download srt
-        const srtBody = await getBody(subtitleHost + `/subtitles/${seriesName}/S${seasonNo}/${epInfo}.srt`)
+        const srtBody = await getBody(subtitleHost + `/${seriesName}/S${seasonNo}/${epInfo}.srt`)
         $.log("srt字幕下载成功！")
 
         // generate webvtt

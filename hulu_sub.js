@@ -1,5 +1,5 @@
 (async () => {
-    // const subtitleHost = 'http://192.168.1.189';
+    // const subtitleHost = 'http://192.168.1.189/subtitles';
     const subtitleHost = 'http://home.miffysoft.cn:8000'
     const $ = Env("hulu_sub.js");
 
@@ -48,7 +48,7 @@
         const epInfo = /(S\d{2}E\d{2})\.vtt$/i.exec($request.url)[1]
         try {
             // var confBody = await getBody(subtitleHost + $request.path.replace(/S\d{2}E\d{2}\.vtt$/i, 'subtitle.conf'))
-            var confBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2})\//.exec($request.url)[1] + '/subtitle.conf')
+            var confBody = await getBody(subtitleHost + /\/[^\/]+\/S\d{2}\//.exec($request.url)[0] + '/subtitle.conf')
             $.log(confBody)
             const off = getConfig(confBody, 'offset', epInfo)
             if (off) {
@@ -68,7 +68,7 @@
 
         // download srt
         //const srtBody = await getBody(subtitleHost + $request.path.replace(/\.vtt$/, '.srt'))
-        const srtBody = await getBody(subtitleHost + /(\/subtitles\/[^\/]+\/S\d{2}\/S\d{2}E\d{2})/.exec($request.url)[1] + '.srt')
+        const srtBody = await getBody(subtitleHost + /(\/[^\/]+\/S\d{2}\/S\d{2}E\d{2})/.exec($request.url)[1] + '.srt')
         $.log("srt字幕下载成功！")
 
         // generate webvtt
