@@ -98,7 +98,17 @@
     }
 
     function getBody(url) {
-        return $.http.get(url).then(resp => resp.body)
+        // return $.http.get(url).then(resp => resp.body)
+        return new Promise((resolve, reject) => {
+            $.http.get({ url }, (err, resp, body) => {
+                if (err || resp.statusCode == 404) {
+                    throw new Error(`request failed for url: ${url}`)
+                }
+                else {
+                    resolve(body)
+                }
+            })
+        })
     }
 
     function getConfig(confBody, key, epInfo) {
