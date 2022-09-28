@@ -88,8 +88,6 @@
             newBody = newBody.replace(/#EXT-X-DISCONTINUITY(\r|\n)[\s\S]*?#EXT-X-MAP:URI=".*?\.mp4"/g, '');
         }
         else if (newBody.indexOf('.vtt') != -1) {
-            // newBody = newBody.replace(/#EXT-X-DISCONTINUITY(\r|\n)[\s\S]*?#EXT-X-SCTE35:TYPE=0x22.*?ID="\d+"/g, '');
-            // newBody = newBody.replace(/#EXTINF:\d\.\d+\,\n\.\.\/.*?\/web\.vtt/g, '#EXTINF:0.000,\n../../../../webvtt/829550949959/peacock-cmaf-hls-vod-6s-021821/web.vtt');
             newBody = `#EXTM3U
 #EXT-X-VERSION:3
 #EXT-X-PLAYLIST-TYPE:VOD
