@@ -1,3 +1,2 @@
 # 强制直连
-#DOMAIN-SUFFIX,local.adguard.org
-#DOMAIN-SUFFIX,injections.adguard.org
+DOMAIN-SUFFIX,home.miffysoft.cn
